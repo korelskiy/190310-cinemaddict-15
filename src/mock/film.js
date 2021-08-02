@@ -37,11 +37,20 @@ const generateFilmTitle = () => {
   return titles[randomIndex];
 };
 
-// Функция генерации имени файла постера на основе имени фильма;
-const getFileName = (title) =>
-  title.split(' ')
-    .map((word) => word.toLowerCase())
-    .join('-');
+// Функция получения названия фильма;
+const generateFilmPoster = () => {
+  const posters = [
+    'made-for-each-other.png',
+    'popeye-meets-sinbad.png',
+    'sagebrush-trail.jpg',
+    'santa-claus-conquers-the-martians.jpg',
+    'the-dance-of-life.jpg',
+    'the-great-flamarion.jpg',
+    'the-man-with-the-golden-arm.jpg',
+  ];
+  const randomIndex = getRandomInteger(0, posters.length - 1);
+  return posters[randomIndex];
+};
 
 // Функция генерации описания фильма (от 1 до 5 случайных предложений из текста);
 const generateFilmDescription = () => {
@@ -177,7 +186,7 @@ const generateFilmDirector = () => {
 };
 
 
-const getRandomComments = () => {
+const generateComment = () => {
   const autors = [
     'John Doe',
     'Tim Macoveev',
@@ -205,10 +214,11 @@ const getRandomComments = () => {
   const randomIndexCommentText = getRandomInteger(0, commentsText.length - 1);
 
   return {
-    emotion: `./images/emoji/${emotions[randomIndexEmotion]}.jpg`,
+    id: 0,
     autor: autors[randomIndexAutor],
+    comment: commentsText[randomIndexCommentText],
     date: generateDateComment(),
-    text: commentsText[randomIndexCommentText],
+    emotion: `./images/emoji/${emotions[randomIndexEmotion]}.jpg`,
   };
 };
 
@@ -216,31 +226,60 @@ const generateCommentsFilm = () => {
   const MIN_COMMENTS_COUNT = 0;
   const MAX_COMMENTS_COUNT = 5;
 
-  return new Array(getRandomInteger(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT))
-    .fill(null)
-    .map(getRandomComments);
+  const comments = [];
+  const randomCountComments = getRandomInteger(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT);
+
+  for (let i = 0; i < randomCountComments; i++) {
+    const comment = generateComment();
+    comment.id = i;
+    comments.push(comment);
+  }
+
+  return comments;
 };
 
-export const generateFilm = () => {
+const generateFilm = () => {
   const title = generateFilmTitle();
 
   return {
-    title: title,
-    originalTitle: 'original title',
-    totalRating: getRandomInteger(1, 9).toFixed(1),
-    description: generateFilmDescription(),
-    poster: `./images/posters/${getFileName(title)}.jpg`,
-    director: generateFilmDirector(),
-    writers: generateFilmWriters(),
-    actors: generateFilmActors(),
-    releaseDate: generateDateFilm(),
-    runtime: getRandomInteger(45, 360),
-    country: generateFilmСountry(),
-    genres: generateFilmGenres(),
-    ageRating: getRandomInteger(0, 21),
-    isWatchlist: Boolean(getRandomInteger(0, 1)),
-    isHistory: Boolean(getRandomInteger(0, 1)),
-    isFavorites: Boolean(getRandomInteger(0, 1)),
+    id: 0,
     comments: generateCommentsFilm(),
+    filmInfo: {
+      title: title,
+      alternativeTitle: 'alternative Title',
+      totalRating: getRandomInteger(1, 9).toFixed(1),
+      poster: generateFilmPoster(),
+      ageRating: getRandomInteger(0, 21),
+      director: generateFilmDirector(),
+      writers: generateFilmWriters(),
+      actors: generateFilmActors(),
+      release: {
+        date: generateDateFilm(),
+        releaseCountry: generateFilmСountry(),
+      },
+      runtime: getRandomInteger(45, 360),
+      genre: generateFilmGenres(),
+      description: generateFilmDescription(),
+      userDetails: {
+        watchlist: Boolean(getRandomInteger(0, 1)),
+        alreadyWatched: Boolean(getRandomInteger(0, 1)),
+        watchingDate: 1,
+        favorite: Boolean(getRandomInteger(0, 1)),
+      },
+    },
   };
 };
+
+
+export const generateFilms = (count) => {
+  const films = [];
+
+  for (let i = 0; i < count; i++) {
+    const film = generateFilm();
+    film.id = i;
+    films.push(film);
+  }
+
+  return films;
+};
+
