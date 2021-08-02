@@ -7,7 +7,7 @@ import {createFilmCardTemplate} from './view/film-card.js';
 import {createShowMoreButtonTemplate} from './view/show-more-button.js';
 import {createFilmDetailsTemplate} from './view/film-details.js';
 import {createStatisticsTemplate} from './view/statistics.js';
-
+import {generateFilm} from './mock/film.js';
 
 const body = document.querySelector('body');
 const siteHeaderElement = document.querySelector('.header');
@@ -17,6 +17,9 @@ const siteFooterStatisticsElement = siteFooterElement.querySelector('.footer__st
 
 const FILMS_COUNT = 5;
 const EXTRA_FILMS_COUNT = 2;
+
+const films = new Array(FILMS_COUNT).fill().map(generateFilm);
+console.log(films);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -32,7 +35,7 @@ const filmsListContainer = filmsList.querySelector('.films-list__container');
 const extraFilmsListContainer = siteMainElement.querySelectorAll('.films-list--extra  .films-list__container');
 
 for (let i = 0; i < FILMS_COUNT; i++) {
-  render(filmsListContainer, createFilmCardTemplate(), 'beforeend');
+  render(filmsListContainer, createFilmCardTemplate(films[i]), 'beforeend');
 }
 
 render(filmsList, createShowMoreButtonTemplate(), 'beforeend');
@@ -45,4 +48,4 @@ extraFilmsListContainer.forEach((container) => {
 
 render(siteMainElement, createStatisticsTemplate(), 'beforeend');
 render(siteFooterStatisticsElement, createFooterStatisticsTemplate(), 'beforeend');
-render(body, createFilmDetailsTemplate(), 'beforeend');
+//render(body, createFilmDetailsTemplate(), 'beforeend');
