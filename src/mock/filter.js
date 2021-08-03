@@ -13,3 +13,15 @@ export const generateFilter = (films) => Object.entries(filmsToFilterMap).map(
     count: countFilms(films),
   }),
 );
+
+export const generateTopFilms = (films) => {
+  const topFilms = films.slice();
+  topFilms.sort((second, first) => first.filmInfo.totalRating - second.filmInfo.totalRating);
+  return topFilms;
+};
+
+export const generateMostCommentedFilms = (films) => {
+  const mostCommentedFilms = films.slice();
+  mostCommentedFilms.sort((second, first) => first.comments.length - second.comments.length);
+  return mostCommentedFilms ;
+};
