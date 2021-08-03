@@ -1,29 +1,30 @@
-import dayjs from 'dayjs';
+import {getRandomInteger, generateDate} from './../util.js';
 
-// Функция, возвращающая случайное целое число из переданного диапазона включительно;
-const getRandomInteger = (min, max) => (max > min) ? Math.floor(Math.random() * (max - min + 1)) + min : null;
+const MIN_YEAR_GAP_FILM = 0;
+const MAX_YEAR_GAP_FILM = 50;
 
-const generateDateFilm = () => {
+const MIN_DAY_GAP_COMMENT = 0;
+const MAX_DAY_GAP_COMMENT = 180;
 
-  const minYearGap = 0;
-  const maxYearGap = 50;
+const MIN_DAY_GAP_WATCHING_FILM = 0;
+const MAX_DAY_GAP_WATCHING_FILM = 360;
 
-  const yearsGap = getRandomInteger(minYearGap, maxYearGap);
+const MIN_DESCRIPTION_FILM_COUNT = 1;
+const MAX_DESCRIPTION_FILM_COUNT = 5;
 
-  return dayjs().subtract(yearsGap, 'year').toDate();
-};
+const MIN_WRITER_FILM_COUNT = 1;
+const MAX_WRITER_FILM_COUNT = 5;
 
-const generateDateComment = () => {
+const MIN_ACTORS_FILM_COUNT = 1;
+const MAX_ACTORS_FILM_COUNT = 5;
 
-  const minDayGap = 0;
-  const maxDayGap = 180;
+const MIN_COMMENTS_FILM_COUNT = 0;
+const MAX_COMMENTS_FILM_COUNT = 5;
 
-  const daysGap = getRandomInteger(minDayGap, maxDayGap);
+const MIN_GENRES_FILM_COUNT = 1;
+const MAX_GENRES_FILM_COUNT = 5;
 
-  return dayjs().subtract(daysGap, 'day').toDate();
-};
-
-// Функция получения названия фильма;
+// Функция генерации случайного названия фильма;
 const generateFilmTitle = () => {
   const titles = [
     'Made for Each Other',
@@ -37,7 +38,7 @@ const generateFilmTitle = () => {
   return titles[randomIndex];
 };
 
-// Функция получения названия фильма;
+// Функция генерации случайного постера к фильму;
 const generateFilmPoster = () => {
   const posters = [
     'made-for-each-other.png',
@@ -52,11 +53,8 @@ const generateFilmPoster = () => {
   return posters[randomIndex];
 };
 
-// Функция генерации описания фильма (от 1 до 5 случайных предложений из текста);
+// Функция генерации случайного описания фильма (от 1 до 5 случайных предложений из текста);
 const generateFilmDescription = () => {
-  const MIN_DESCRIPTION_COUNT = 1;
-  const MAX_DESCRIPTION_COUNT = 5;
-
   const descriptions = [
     'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
     'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -72,7 +70,7 @@ const generateFilmDescription = () => {
     return description;
   };
 
-  const descriptionFilm = new Array(getRandomInteger(MIN_DESCRIPTION_COUNT, MAX_DESCRIPTION_COUNT))
+  const descriptionFilm = new Array(getRandomInteger(MIN_DESCRIPTION_FILM_COUNT, MAX_DESCRIPTION_FILM_COUNT))
     .fill(null)
     .map(getRandomDescription)
     .join(' ');
@@ -80,11 +78,8 @@ const generateFilmDescription = () => {
   return descriptionFilm;
 };
 
-// Функция генерации сценаристов к фильму (от 1 до 5 случайных писателей);
+// Функция генерации случайного списка сценаристов к фильму (от 1 до 5 случайных сценаристов);
 const generateFilmWriters = () => {
-  const MIN_WRITER_COUNT = 1;
-  const MAX_WRITER_COUNT = 5;
-
   const writers = [
     'Anne Wigton',
     'Heinz Herald',
@@ -100,19 +95,16 @@ const generateFilmWriters = () => {
     return writer;
   };
 
-  const writersFilm = new Array(getRandomInteger(MIN_WRITER_COUNT, MAX_WRITER_COUNT))
+  const writersForFilm = new Array(getRandomInteger(MIN_WRITER_FILM_COUNT, MAX_WRITER_FILM_COUNT))
     .fill(null)
     .map(getRandomWriter)
     .join(', ');
 
-  return writersFilm;
+  return writersForFilm;
 };
 
-// Функция генерации актеров к фильму (от 1 до 5 случайных актеров);
+// Функция генерации случайного списка актеров к фильму (от 1 до 5 случайных актеров);
 const generateFilmActors = () => {
-  const MIN_ACTORS_COUNT = 1;
-  const MAX_ACTORS_COUNT = 5;
-
   const actors = [
     'Erich von Stroheim',
     'Mary Beth Hughes',
@@ -128,15 +120,15 @@ const generateFilmActors = () => {
     return actor;
   };
 
-  const actorsFilm = new Array(getRandomInteger(MIN_ACTORS_COUNT, MAX_ACTORS_COUNT))
+  const actorsForFilm = new Array(getRandomInteger(MIN_ACTORS_FILM_COUNT, MAX_ACTORS_FILM_COUNT))
     .fill(null)
     .map(getRandomActor)
     .join(', ');
 
-  return actorsFilm;
+  return actorsForFilm;
 };
 
-// Функция генерации жанров фильма;
+// Функция генерации случайного жанра к фильму;
 const generateFilmGenres = () => {
   const genres = [
     'Action',
@@ -150,11 +142,19 @@ const generateFilmGenres = () => {
     'Western',
   ];
 
-  const randomIndex = getRandomInteger(0, genres.length - 1);
-  return genres[randomIndex];
+  const getRandomGenre = () => {
+    const genre = genres[getRandomInteger(0, genres.length - 1)];
+    return genre;
+  };
+
+  const genresForFilm = new Array(getRandomInteger(MIN_GENRES_FILM_COUNT, MAX_GENRES_FILM_COUNT))
+    .fill(null)
+    .map(getRandomGenre);
+
+  return genresForFilm;
 };
 
-// Функция генерации страны фильма;
+// Функция генерации случайной страны фильма;
 const generateFilmСountry = () => {
   const сountries = [
     'South Korea',
@@ -171,7 +171,7 @@ const generateFilmСountry = () => {
   return сountries[randomIndex];
 };
 
-// Функция генерации кинорежиссера фильма;
+// Функция генерации случайного кинорежиссера фильма;
 const generateFilmDirector = () => {
   const directors = [
     'Steven Allan Spielberg',
@@ -185,7 +185,7 @@ const generateFilmDirector = () => {
   return directors[randomIndex];
 };
 
-
+// Функция генерации случайного комментария к фильму;
 const generateComment = () => {
   const autors = [
     'John Doe',
@@ -217,17 +217,15 @@ const generateComment = () => {
     id: 0,
     autor: autors[randomIndexAutor],
     comment: commentsText[randomIndexCommentText],
-    date: generateDateComment(),
-    emotion: `./images/emoji/${emotions[randomIndexEmotion]}.jpg`,
+    date: generateDate(MIN_DAY_GAP_COMMENT, MAX_DAY_GAP_COMMENT, 'day'),
+    emotion: `./images/emoji/${emotions[randomIndexEmotion]}.png`,
   };
 };
 
+// Функция генерации случайного списка комментарий к фильму (от 0 до 5 случайных комментариев);
 const generateCommentsFilm = () => {
-  const MIN_COMMENTS_COUNT = 0;
-  const MAX_COMMENTS_COUNT = 5;
-
   const comments = [];
-  const randomCountComments = getRandomInteger(MIN_COMMENTS_COUNT, MAX_COMMENTS_COUNT);
+  const randomCountComments = getRandomInteger(MIN_COMMENTS_FILM_COUNT, MAX_COMMENTS_FILM_COUNT);
 
   for (let i = 0; i < randomCountComments; i++) {
     const comment = generateComment();
@@ -238,15 +236,15 @@ const generateCommentsFilm = () => {
   return comments;
 };
 
+// Функция генерации случайных данных к фильму;
 const generateFilm = () => {
   const title = generateFilmTitle();
-
   return {
     id: 0,
     comments: generateCommentsFilm(),
     filmInfo: {
       title: title,
-      alternativeTitle: 'alternative Title',
+      alternativeTitle: `Alternative Title For ${title}`,
       totalRating: getRandomInteger(1, 9).toFixed(1),
       poster: generateFilmPoster(),
       ageRating: getRandomInteger(0, 21),
@@ -254,7 +252,7 @@ const generateFilm = () => {
       writers: generateFilmWriters(),
       actors: generateFilmActors(),
       release: {
-        date: generateDateFilm(),
+        date: generateDate(MIN_YEAR_GAP_FILM, MAX_YEAR_GAP_FILM, 'year'),
         releaseCountry: generateFilmСountry(),
       },
       runtime: getRandomInteger(45, 360),
@@ -263,14 +261,14 @@ const generateFilm = () => {
       userDetails: {
         watchlist: Boolean(getRandomInteger(0, 1)),
         alreadyWatched: Boolean(getRandomInteger(0, 1)),
-        watchingDate: 1,
+        watchingDate: generateDate(MIN_DAY_GAP_WATCHING_FILM, MAX_DAY_GAP_WATCHING_FILM, 'day'),
         favorite: Boolean(getRandomInteger(0, 1)),
       },
     },
   };
 };
 
-
+// Функция генерации массива mock-овых данных к фильмам;
 export const generateFilms = (count) => {
   const films = [];
 

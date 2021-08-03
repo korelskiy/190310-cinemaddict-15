@@ -1,9 +1,9 @@
-import dayjs from 'dayjs';
+import {timeConvert, getFormatData} from './../util.js';
 
 const MAX_COUNT_DESCRIPTION = 140;
 
 export const createFilmCardTemplate = (film) =>  {
-  const {title, totalRating, genre, description, release, runtime, poster} = film.filmInfo;
+  const {title, totalRating, genre, description, release, runtime, poster, userDetails} = film.filmInfo;
 
   const createDescriptionText = (descriptionText) => {
     if (descriptionText.length < MAX_COUNT_DESCRIPTION) {
@@ -12,31 +12,27 @@ export const createFilmCardTemplate = (film) =>  {
     return `${descriptionText.slice(0, MAX_COUNT_DESCRIPTION - 3)}...`;
   };
 
-  const date = dayjs(release.date).format('YYYY');
+  const releaseDate = getFormatData(release.date, 'YYYY');
 
-  const timeConvert = (time) => {
-    const hours = (time / 60);
-    const roundingHours = Math.floor(hours);
-    const minutes = (hours - roundingHours) * 60;
-    const roundingMinutes = Math.round(minutes);
-    return  `${roundingHours}h ${roundingMinutes}m`;
-  }
+  const getClassNameActiveControl = (cardControl) => cardControl
+    ? 'film-card__controls-item--active'
+    : '';
 
   return `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>
     <p class="film-card__rating">${totalRating}</p>
     <p class="film-card__info">
-      <span class="film-card__year">${date}</span>
+      <span class="film-card__year">${releaseDate}</span>
       <span class="film-card__duration">${timeConvert(runtime)}</span>
-      <span class="film-card__genre">${genre}</span>
+      <span class="film-card__genre">${genre[0]}</span>
     </p>
     <img src="./images/posters/${poster}"  alt="" class="film-card__poster">
     <p class="film-card__description">${createDescriptionText(description)}</p>
     <a class="film-card__comments">${film.comments.length} comments</a>
     <div class="film-card__controls">
-      <button class="film-card__controls-item film-card__controls-item--add-to-watchlist" type="button">Add to watchlist</button>
-      <button class="film-card__controls-item film-card__controls-item--mark-as-watched" type="button">Mark as watched</button>
-      <button class="film-card__controls-item film-card__controls-item--favorite" type="button">Mark as favorite</button>
+      <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${getClassNameActiveControl(userDetails.watchlist)}" type="button">Add to watchlist</button>
+      <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${getClassNameActiveControl(userDetails.alreadyWatched)}" type="button">Mark as watched</button>
+      <button class="film-card__controls-item film-card__controls-item--favorite ${getClassNameActiveControl(userDetails.favorite)}" type="button">Mark as favorite</button>
     </div>
-  </article>`
+  </article>`;
 };

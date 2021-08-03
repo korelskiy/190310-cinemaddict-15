@@ -8,6 +8,7 @@ import {createShowMoreButtonTemplate} from './view/show-more-button.js';
 import {createFilmDetailsTemplate} from './view/film-details.js';
 import {createStatisticsTemplate} from './view/statistics.js';
 import {generateFilms} from './mock/film.js';
+import {generateFilter} from './mock/filter.js';
 
 const body = document.querySelector('body');
 const siteHeaderElement = document.querySelector('.header');
@@ -15,18 +16,20 @@ const siteMainElement = document.querySelector('.main');
 const siteFooterElement = document.querySelector('.footer');
 const siteFooterStatisticsElement = siteFooterElement.querySelector('.footer__statistics');
 
+
 const FILMS_COUNT = 5;
 const EXTRA_FILMS_COUNT = 2;
 
 const films = generateFilms(FILMS_COUNT);
-console.log(films);
+const filters = generateFilter(films);
+
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
 };
 
 render(siteHeaderElement, createUserProfileTemplate(), 'beforeend');
-render(siteMainElement, createSiteNavigationTemplate(), 'beforeend');
+render(siteMainElement, createSiteNavigationTemplate(filters), 'beforeend');
 render(siteMainElement, createSiteSortTemplate(), 'beforeend');
 render(siteMainElement, createSiteFilmsTemplate(), 'beforeend');
 
@@ -48,4 +51,5 @@ extraFilmsListContainer.forEach((container) => {
 
 render(siteMainElement, createStatisticsTemplate(), 'beforeend');
 render(siteFooterStatisticsElement, createFooterStatisticsTemplate(), 'beforeend');
-//render(body, createFilmDetailsTemplate(), 'beforeend');
+//render(body, createFilmDetailsTemplate(films[0]), 'beforeend');
+
