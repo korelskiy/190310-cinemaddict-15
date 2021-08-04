@@ -6,9 +6,7 @@ export const createFilmDetailsTemplate = (film) =>  {
   const releaseDate = getFormatData(release.date, 'DD MMMM YYYY');
 
   const getTemplateGenres = (genresFilm) => {
-    const getGenresFilmElement = (genreData) => {
-      return `<span class="film-details__genre">${genreData}</span>`;;
-    };
+    const getGenresFilmElement = (genreData) => `<span class="film-details__genre">${genreData}</span>`;
     return genresFilm.map(getGenresFilmElement).join('');
   };
 
