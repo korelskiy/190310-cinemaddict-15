@@ -1,8 +1,8 @@
-import {timeConvert, getFormatData} from './../util.js';
+import {timeConvert, getFormatData, createElement} from '../utils.js';
 
 const MAX_COUNT_DESCRIPTION = 140;
 
-export const createFilmCardTemplate = (film) =>  {
+const createFilmCardTemplate = (film) =>  {
   const {title, totalRating, genre, description, release, runtime, poster, userDetails} = film.filmInfo;
 
   const createDescriptionText = (descriptionText) => {
@@ -36,3 +36,26 @@ export const createFilmCardTemplate = (film) =>  {
     </div>
   </article>`;
 };
+
+export default class FilmCard {
+  constructor(film) {
+    this._film = film;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._film);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

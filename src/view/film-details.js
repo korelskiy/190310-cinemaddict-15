@@ -1,6 +1,6 @@
-import {timeConvert, getFormatData} from './../util.js';
+import {timeConvert, getFormatData, createElement} from '../utils.js';
 
-export const createFilmDetailsTemplate = (film) =>  {
+const createFilmDetailsTemplate = (film) =>  {
   const {title, alternativeTitle, totalRating, director, writers, actors, genre, description, release, runtime, poster, userDetails, ageRating} = film.filmInfo;
 
   const releaseDate = getFormatData(release.date, 'DD MMMM YYYY');
@@ -147,3 +147,26 @@ export const createFilmDetailsTemplate = (film) =>  {
     </form>
   </section>`;
 };
+
+export default class FilmDetails {
+  constructor(filmDetails) {
+    this._filmDetails = filmDetails;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmDetailsTemplate(this._filmDetails);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
