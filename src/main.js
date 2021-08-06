@@ -39,10 +39,12 @@ const renderFilms = (filmsListElement, film) => {
 
   const replaceFilmToDetailsFilm = () => {
     body.appendChild(filmDetailsComponent.getElement());
+    body.classList.add('hide-overflow');
   };
 
   const replaceDetailsFilmToFilm = () => {
     body.removeChild(filmDetailsComponent.getElement());
+    body.classList.remove('hide-overflow');
   };
 
   filmComponent.getElement().querySelector('.film-card__poster').addEventListener('click', () => {
