@@ -1,4 +1,5 @@
-import {getRandomInteger, generateDate} from '../utils.js';
+import {generateDate} from '../utils/film.js';
+import {getRandomInteger} from '../utils/common.js';
 
 const MIN_YEAR_GAP_FILM = 0;
 const MAX_YEAR_GAP_FILM = 50;
