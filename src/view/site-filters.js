@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const createSiteNavigationTemplate = (filters) =>  {
 
@@ -17,25 +17,13 @@ const createSiteNavigationTemplate = (filters) =>  {
   </nav>`;
 };
 
-export default class FilmsFilters {
+export default class FilmsFilters extends AbstractView {
   constructor(filters) {
+    super();
     this._filters = filters;
-    this._element = null;
   }
 
   getTemplate() {
     return createSiteNavigationTemplate(this._filters);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const createSiteSortFilmsTemplate = () =>  (
   `<ul class="sort">
@@ -7,25 +7,9 @@ const createSiteSortFilmsTemplate = () =>  (
     <li><a href="#" class="sort__button">Sort by rating</a></li>
   </ul>`
 );
-export default class FilmsSort {
-  constructor() {
-    this._element = null;
-  }
-
+export default class FilmsSort extends AbstractView {
   getTemplate() {
     return  createSiteSortFilmsTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
