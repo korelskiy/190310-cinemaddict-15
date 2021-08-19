@@ -1,191 +1,127 @@
-import UserProfileView from './view/user-profile.js';
-import FilmsFiltersView from './view/site-filters.js';
-import MoreButtonView from './view/show-more-button.js';
-import FilmsMostCommentedView from './view/site-films-most.js';
-import FilmsContainerMostCommentedView from './view/site-films-container-most.js';
-import FilmsTopView from './view/site-films-top.js';
-import FilmsContainerTopView from './view/site-films-container-top.js';
-import FilmsView from './view/site-films.js';
-import FilmsListView from './view/site-films-list.js';
-import FilmsListContainerView from './view/site-films-list-container.js';
-import FilmsSortView from './view/site-sort.js';
-import StatisticsView from './view/statistics.js';
-import StatisticsFooterView from './view/site-footer-statistics.js';
-import FilmCardView from './view/film-card.js';
-import FilmDetailsView from './view/film-details.js';
-import NoFilmsView from './view/no-films.js';
-
-import {render, RenderPosition, remove} from './utils/render.js';
-
-const FILMS_COUNT = 24;
-const FILMS_COUNT_PER_STEP = 5;
-const EXTRA_FILMS_COUNT = 2;
+import FilmCardView from '../view/film-card.js';
+import FilmDetailsView from '../view/film-details.js';
+import {render, RenderPosition, remove, replace} from '../utils/render.js';
 
 const body = document.querySelector('body');
-const siteHeaderElement = document.querySelector('.header');
-const siteMainElement = document.querySelector('.main');
-const siteFooterElement = document.querySelector('.footer');
-const siteFooterStatisticsElement = siteFooterElement.querySelector('.footer__statistics');
 
-export default class Movie {
-  constructor(movieContainer) {
-    this._movieContainer = movieContainer;
+export default class Film {
+  constructor(filmListContainer, changeData) {
 
-    this._userProfileComponent = new UserProfileView();
-    this._filmsFiltersComponent = new FilmsFiltersView();
-    this._filmsSortComponent = new FilmsSortView();
-    this._filmCardComponent = new FilmCardView();
-    this._filmDetailsComponent = new FilmDetailsView();
-    this._noFilmsComponent = new NoFilmsView();
-    this._statisticsFooterComponent = new StatisticsFooterView();
-    this._filmsComponent = new FilmsView();
-    this._filmsListComponent = new FilmsListView();
-    this._filmsListContainerComponent = new FilmsListContainerView();
-    this._filmsTopComponent = new FilmsTopView();
-    this._filmsMostCommentedComponent = new FilmsMostCommentedView();
-    this._filmsContainerMostCommentedComponent = new FilmsContainerMostCommentedView();
-    this._filmsContainerTopComponent = new FilmsContainerTopView();
+    this._filmListContainer = filmListContainer;
+    this._changeData = changeData;
 
-    /*
-    this._moreButtonComponent = new MoreButtonView();
+    this._filmCardComponent = null;
+    this._filmDetailsComponent = null;
 
-    this._statisticsComponent = new StatisticsView();
-    */
+    this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
+    this._handleAlreadyWatchedClick = this._handleAlreadyWatchedClick.bind(this);
+    this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleCardClick = this._handleCardClick.bind(this);
+    this._handleCloseCardFilmDetailClick = this._handleCloseCardFilmDetailClick.bind(this);
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
-  init(films) {
-    this._films = films.slice();
-    // Метод для инициализации (начала работы) модуля,
-    render(siteMainElement, this._filmsComponent, RenderPosition.BEFOREEND);
-    render(this._filmsComponent, this._filmsListComponent, RenderPosition.BEFOREEND);
+  init(film) {
+    this._film = film;
 
-    this._renderFilmsPanel();
-  }
+    const prevfilmCardComponent = this._filmCardComponent;
+    const prevfilmDetailsComponent = this._filmDetailsComponent;
 
-  _renderProfile() {
-    // Метод для рендеринга User Profile
-    render(siteHeaderElement, this._userProfileComponent, RenderPosition.BEFOREEND);
-  }
+    this._filmCardComponent = new FilmCardView(film);
+    this._filmDetailsComponent = new FilmDetailsView(film);
 
-  _renderFilters() {
-    // Метод для рендеринга фильтров
-    render(siteMainElement, this._filmsFiltersComponent, RenderPosition.BEFOREEND);
-  }
+    this._filmCardComponent.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._filmCardComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
+    this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
-  _renderSort() {
-    // Метод для рендеринга сортировки
-    render(siteMainElement, this._filmsSortComponent, RenderPosition.BEFOREEND);
-  }
+    this._filmCardComponent.setPosterClickHandler(this._handleCardClick);
+    this._filmCardComponent.setTitleClickHandler(this._handleCardClick);
+    this._filmCardComponent.setCommentsClickHandler(this._handleCardClick);
+    this._filmDetailsComponent.setCloseButtonClickHandler(this._handleCloseCardFilmDetailClick);
 
-  _renderFilm(film) {
-    const filmComponent = new FilmCardView(film);
-    const filmDetailsComponent = new FilmDetailsView(film);
-
-    const renderCardFilmDetails = () => {
-      render(body, filmDetailsComponent, RenderPosition.BEFOREEND);
-      body.classList.add('hide-overflow');
-    };
-
-    const renderCardFilm = () => {
-      remove(filmDetailsComponent);
-      body.classList.remove('hide-overflow');
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === 'Escape' || evt.key === 'Esc') {
-        evt.preventDefault();
-        renderCardFilm();
-        document.removeEventListener('keydown', onEscKeyDown);
-      }
-    };
-
-    filmComponent.setPosterClickHandler(() => {
-      renderCardFilmDetails();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    filmComponent.setTitleClickHandler(() => {
-      renderCardFilmDetails();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    filmComponent.setCommentsClickHandler(() => {
-      renderCardFilmDetails();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    filmDetailsComponent.setCloseButtonClickHandler(() => {
-      renderCardFilm();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-    render(this._filmsListContainerComponent, filmComponent, RenderPosition.BEFOREEND);
-  }
-
-  _renderFilms(from, to) {
-    this._films
-      .slice(from, to)
-      .forEach((film) => this._renderFilm(film));
-  }
-
-  _renderNoFilm() {
-    render(this._filmsListComponent, this._noFilmsComponent, RenderPosition.BEFOREEND);
-  }
-
-  _renderMoreButton() {
-    let renderedFilmCount = FILMS_COUNT_PER_STEP;
-    const showMoreButton = new MoreButtonView();
-
-    render(this._filmsListComponent, showMoreButton, RenderPosition.BEFOREEND);
-
-    showMoreButton.setClickHandler(() => {
-      this._films
-        .slice(renderedFilmCount, renderedFilmCount + FILMS_COUNT_PER_STEP)
-        .forEach((film) => this._renderFilm(film));
-
-      renderedFilmCount += FILMS_COUNT_PER_STEP;
-
-      if (renderedFilmCount >= this._films.length) {
-        remove(showMoreButton);
-      }
-    });
-  }
-
-  _renderFilmList() {
-    render(this._filmsListComponent, this._filmsListContainerComponent, RenderPosition.BEFOREEND);
-
-    this._renderFilms(0, Math.min(this._films.length, FILMS_COUNT_PER_STEP));
-
-    if (this._films.length > FILMS_COUNT_PER_STEP) {
-      this._renderMoreButton();
-    }
-  }
-
-  _renderFilmTop() {
-    render(this._filmsComponent, this._filmsTopComponent, RenderPosition.BEFOREEND);
-    render(this._filmsTopComponent, this._filmsContainerTopComponent, RenderPosition.BEFOREEND);
-    this._renderFilms(0, EXTRA_FILMS_COUNT);
-  }
-
-  _renderFilmMostCommented() {
-    render(this._filmsComponent, this._filmsMostCommentedComponent, RenderPosition.BEFOREEND);
-    render(this._filmsMostCommentedComponent, this._filmsContainerMostCommentedComponent, RenderPosition.BEFOREEND);
-    this._renderFilms(0, EXTRA_FILMS_COUNT);
-  }
-
-  _renderFilmsPanel() {
-    if (this._films.length === 0) {
-      this._renderNoFilm();
+    if (prevfilmCardComponent === null || prevfilmDetailsComponent === null) {
+      render(this._filmListContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
       return;
     }
 
-    this._renderProfile();
-    this._renderFilters();
-    this._renderSort();
-    this._renderFilmList();
+    if (this._filmListContainer.getElement().contains(prevfilmCardComponent.getElement())) {
+      replace(this._filmCardComponent, prevfilmCardComponent);
+    }
+
+    if (this._taskListContainer.getElement().contains(prevfilmDetailsComponent.getElement())) {
+      replace(this._filmDetailsComponent, prevfilmDetailsComponent);
+    }
+
+    remove(prevfilmCardComponent);
+    remove(prevfilmDetailsComponent);
   }
 
-  _renderStatisticsFooter() {
-    // Метод для рендеринга статистики в Footer
-    render(siteFooterStatisticsElement, this._statisticsFooterComponent, RenderPosition.BEFOREEND);
+  destroy() {
+    remove(this._filmCardComponent);
+    remove(this._filmDetailsComponent);
+  }
+
+  _renderCardFilmDetails() {
+    render(body, this._filmDetailsComponent, RenderPosition.BEFOREEND);
+    document.addEventListener('keydown', this._escKeyDownHandler);
+    body.classList.add('hide-overflow');
+  }
+
+  _renderCardFilm() {
+    remove(this._filmDetailsComponent);
+    document.removeEventListener('keydown', this._escKeyDownHandler);
+    body.classList.remove('hide-overflow');
+  }
+
+  _escKeyDownHandler(evt) {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this._renderCardFilm();
+      document.removeEventListener('keydown', this._escKeyDownHandler);
+    }
+  }
+
+  _handleWatchlistClick() {
+    this._changeData(
+      Object.assign(
+        {},
+        this._film,
+        {
+          watchlist: !this._film.filmInfo.userDetails.watchlist,
+        },
+      ),
+    );
+  }
+
+  _handleAlreadyWatchedClick() {
+    this._changeData(
+      Object.assign(
+        {},
+        this._film.filmInfo.userDetails,
+        {
+          alreadyWatched: !this._film.filmInfo.userDetails.alreadyWatched,
+        },
+      ),
+    );
+  }
+
+  _handleFavoriteClick() {
+    this._changeData(
+      Object.assign(
+        {},
+        this._film.filmInfo.userDetails,
+        {
+          favorite: !this._film.filmInfo.userDetails.favorite,
+        },
+      ),
+    );
+  }
+
+  _handleCardClick() {
+    this._renderCardFilmDetails();
+  }
+
+  _handleCloseCardFilmDetailClick() {
+    this._renderCardFilm();
   }
 }

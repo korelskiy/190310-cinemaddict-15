@@ -161,7 +161,7 @@ export default class FilmDetails extends AbstractView {
 
   _closeButtonClickHandler(evt) {
     evt.preventDefault();
-    this._callback.closeButtonClick();
+    this._callback.closeButtonClick(this._task);
   }
 
   setCloseButtonClickHandler(callback) {
