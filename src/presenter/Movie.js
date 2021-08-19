@@ -97,7 +97,7 @@ export default class Film {
     this._changeData(
       Object.assign(
         {},
-        this._film.filmInfo.userDetails,
+        this._film,
         {
           alreadyWatched: !this._film.filmInfo.userDetails.alreadyWatched,
         },
@@ -109,7 +109,7 @@ export default class Film {
     this._changeData(
       Object.assign(
         {},
-        this._film.filmInfo.userDetails,
+        this._film,
         {
           favorite: !this._film.filmInfo.userDetails.favorite,
         },

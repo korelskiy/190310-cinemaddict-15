@@ -6,6 +6,7 @@ import MovieListPresenter from './presenter/movieList.js';
 const FILMS_COUNT = 24;
 
 const films = generateFilms(FILMS_COUNT);
+
 //const filters = generateFilter(films);
 //const topRatedFilms = generateTopFilms(films);
 //const mostCommentedFilms = generateMostCommentedFilms(films);

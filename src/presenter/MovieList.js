@@ -65,7 +65,6 @@ export default class Movie {
   }
 
   _handleFilmChange(updatedFilm) {
-    console.log(updatedFilm);
     this._films = updateItem(this._films, updatedFilm);
     this._filmPresenter.get(updatedFilm.id).init(updatedFilm);
   }
