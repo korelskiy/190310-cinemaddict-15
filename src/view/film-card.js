@@ -4,7 +4,7 @@ import {timeConvert, getFormatData} from '../utils/film.js';
 const MAX_COUNT_DESCRIPTION = 140;
 
 const createFilmCardTemplate = (film) =>  {
-  const {title, totalRating, genre, description, release, runtime, poster, userDetails} = film.filmInfo;
+  const {title, totalRating, genre, description, release, runtime, poster, watchlist, alreadyWatched, favorite} = film;
 
   const createDescriptionText = (descriptionText) => {
     if (descriptionText.length < MAX_COUNT_DESCRIPTION) {
@@ -31,9 +31,9 @@ const createFilmCardTemplate = (film) =>  {
     <p class="film-card__description">${createDescriptionText(description)}</p>
     <a class="film-card__comments">${film.comments.length} comments</a>
     <div class="film-card__controls">
-      <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${getClassNameActiveControl(userDetails.watchlist)}" type="button">Add to watchlist</button>
-      <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${getClassNameActiveControl(userDetails.alreadyWatched)}" type="button">Mark as watched</button>
-      <button class="film-card__controls-item film-card__controls-item--favorite ${getClassNameActiveControl(userDetails.favorite)}" type="button">Mark as favorite</button>
+      <button class="film-card__controls-item film-card__controls-item--add-to-watchlist ${getClassNameActiveControl(watchlist)}" type="button">Add to watchlist</button>
+      <button class="film-card__controls-item film-card__controls-item--mark-as-watched ${getClassNameActiveControl(alreadyWatched)}" type="button">Mark as watched</button>
+      <button class="film-card__controls-item film-card__controls-item--favorite ${getClassNameActiveControl(favorite)}" type="button">Mark as favorite</button>
     </div>
   </article>`;
 };

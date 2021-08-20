@@ -34,10 +34,15 @@ export default class Film {
     this._filmCardComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
+    this._filmDetailsComponent.setWatchlistClickHandler(this._handleWatchlistClick);
+    this._filmDetailsComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
+    this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+
     this._filmCardComponent.setPosterClickHandler(this._handleCardClick);
     this._filmCardComponent.setTitleClickHandler(this._handleCardClick);
     this._filmCardComponent.setCommentsClickHandler(this._handleCardClick);
     this._filmDetailsComponent.setCloseButtonClickHandler(this._handleCloseCardFilmDetailClick);
+
 
     if (prevfilmCardComponent === null || prevfilmDetailsComponent === null) {
       render(this._filmListContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
@@ -87,7 +92,7 @@ export default class Film {
         {},
         this._film,
         {
-          watchlist: !this._film.filmInfo.userDetails.watchlist,
+          watchlist: !this._film.watchlist,
         },
       ),
     );
@@ -99,7 +104,7 @@ export default class Film {
         {},
         this._film,
         {
-          alreadyWatched: !this._film.filmInfo.userDetails.alreadyWatched,
+          alreadyWatched: !this._film.alreadyWatched,
         },
       ),
     );
@@ -111,7 +116,7 @@ export default class Film {
         {},
         this._film,
         {
-          favorite: !this._film.filmInfo.userDetails.favorite,
+          favorite: !this._film.favorite,
         },
       ),
     );

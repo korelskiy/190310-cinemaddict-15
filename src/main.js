@@ -1,16 +1,29 @@
+import UserProfileView from './view/user-profile.js';
+import FilmsFiltersView from './view/site-filters.js';
+//import StatisticsView from './view/statistics.js';
+import StatisticsFooterView from './view/site-footer-statistics.js';
 import {generateFilms} from './mock/film.js';
-//import {generateFilter, generateTopFilms, generateMostCommentedFilms} from './mock/filter.js';
-//import {render, RenderPosition, remove} from '../utils/render.js';
+import {generateFilter} from './mock/filter.js';
+import {render, RenderPosition} from './utils/render.js';
 import MovieListPresenter from './presenter/movieList.js';
 
 const FILMS_COUNT = 24;
-
 const films = generateFilms(FILMS_COUNT);
+const filters = generateFilter(films);
 
-//const filters = generateFilter(films);
-//const topRatedFilms = generateTopFilms(films);
-//const mostCommentedFilms = generateMostCommentedFilms(films);
+const siteHeaderElement = document.querySelector('.header');
+const siteMainElement = document.querySelector('.main');
+const siteFooterElement = document.querySelector('.footer');
+const siteFooterStatisticsElement = siteFooterElement.querySelector('.footer__statistics');
+
+render(siteHeaderElement, new UserProfileView(), RenderPosition.BEFOREEND);
+render(siteMainElement, new FilmsFiltersView(filters), RenderPosition.BEFOREEND);
 
 const movieListPresenter = new MovieListPresenter();
-
 movieListPresenter.init(films);
+
+/* Временно скрыл отрисовку страницы статистики
+render(siteMainElement, new StatisticsView().getElement(), RenderPosition.BEFOREEND);
+*/
+
+render(siteFooterStatisticsElement, new StatisticsFooterView(films.length), RenderPosition.BEFOREEND);

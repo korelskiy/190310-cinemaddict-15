@@ -1,10 +1,10 @@
 const filmsToFilterMap = {
   watchlist: (films) => films
-    .filter((film) => film.filmInfo.userDetails.watchlist).length,
+    .filter((film) => film.watchlist).length,
   history: (films) => films
-    .filter((film) => film.filmInfo.userDetails.alreadyWatched).length,
+    .filter((film) => film.alreadyWatched).length,
   favorites: (films) => films
-    .filter((film) => film.filmInfo.userDetails.favorite).length,
+    .filter((film) => film.favorite).length,
 };
 
 export const generateFilter = (films) => Object.entries(filmsToFilterMap).map(
@@ -16,7 +16,7 @@ export const generateFilter = (films) => Object.entries(filmsToFilterMap).map(
 
 export const generateTopFilms = (films) => {
   const topFilms = films.slice();
-  topFilms.sort((second, first) => first.filmInfo.totalRating - second.filmInfo.totalRating);
+  topFilms.sort((second, first) => first.totalRating - second.totalRating);
   return topFilms;
 };
 

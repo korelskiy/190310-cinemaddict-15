@@ -243,29 +243,26 @@ const generateFilm = () => {
   return {
     id: nanoid(),
     comments: generateCommentsFilm(),
-    filmInfo: {
-      title: title,
-      alternativeTitle: `Alternative Title For ${title}`,
-      totalRating: getRandomInteger(1, 9).toFixed(1),
-      poster: generateFilmPoster(),
-      ageRating: getRandomInteger(0, 21),
-      director: generateFilmDirector(),
-      writers: generateFilmWriters(),
-      actors: generateFilmActors(),
-      release: {
-        date: generateDate(MIN_YEAR_GAP_FILM, MAX_YEAR_GAP_FILM, 'year'),
-        releaseCountry: generateFilmСountry(),
-      },
-      runtime: getRandomInteger(45, 360),
-      genre: generateFilmGenres(),
-      description: generateFilmDescription(),
-      userDetails: {
-        watchlist: Boolean(getRandomInteger(0, 1)),
-        alreadyWatched: Boolean(getRandomInteger(0, 1)),
-        watchingDate: generateDate(MIN_DAY_GAP_WATCHING_FILM, MAX_DAY_GAP_WATCHING_FILM, 'day'),
-        favorite: Boolean(getRandomInteger(0, 1)),
-      },
+    title: title,
+    alternativeTitle: `Alternative Title For ${title}`,
+    totalRating: getRandomInteger(1, 9).toFixed(1),
+    poster: generateFilmPoster(),
+    ageRating: getRandomInteger(0, 21),
+    director: generateFilmDirector(),
+    writers: generateFilmWriters(),
+    actors: generateFilmActors(),
+    release: {
+      date: generateDate(MIN_YEAR_GAP_FILM, MAX_YEAR_GAP_FILM, 'year'),
+      releaseCountry: generateFilmСountry(),
     },
+    runtime: getRandomInteger(45, 360),
+    genre: generateFilmGenres(),
+    description: generateFilmDescription(),
+    watchlist: Boolean(getRandomInteger(0, 1)),
+    alreadyWatched: Boolean(getRandomInteger(0, 1)),
+    watchingDate: generateDate(MIN_DAY_GAP_WATCHING_FILM, MAX_DAY_GAP_WATCHING_FILM, 'day'),
+    favorite: Boolean(getRandomInteger(0, 1)),
+
   };
 };
 
