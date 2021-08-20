@@ -10,7 +10,7 @@ import FilmsListContainerView from '../view/site-films-list-container.js';
 import FilmsSortView from '../view/site-sort.js';
 import NoFilmsView from '../view/no-films.js';
 
-import {generateFilter, generateTopFilms, generateMostCommentedFilms} from '../mock/filter.js';
+import {generateTopFilms, generateMostCommentedFilms} from '../mock/filter.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import {updateItem} from '../utils/common.js';
 
@@ -37,6 +37,7 @@ export default class Movie {
 
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
     this._handleFilmChange = this._handleFilmChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
   }
 
   init(films) {
@@ -44,6 +45,10 @@ export default class Movie {
     this._topRatedFilms = generateTopFilms(films);
     this._mostCommentedFilms = generateMostCommentedFilms(films);
     this._renderFilmsPanel();
+  }
+
+  _handleModeChange() {
+    this._filmPresenter.forEach((presenter) => presenter.resetView());
   }
 
   _handleFilmChange(updatedFilm) {
@@ -56,7 +61,7 @@ export default class Movie {
   }
 
   _renderFilm(filmListContainer, film) {
-    const moviePresenter = new MoviePresenter(filmListContainer, this._handleFilmChange);
+    const moviePresenter = new MoviePresenter(filmListContainer, this._handleFilmChange, this._handleModeChange);
     moviePresenter.init(film);
     this._filmPresenter.set(film.id, moviePresenter);
   }

@@ -4,14 +4,20 @@ import {render, RenderPosition, remove, replace} from '../utils/render.js';
 
 const body = document.querySelector('body');
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  DETAILS: 'DETAILS',
+};
 export default class Film {
-  constructor(filmListContainer, changeData) {
+  constructor(filmListContainer, changeData, changeMode) {
 
     this._filmListContainer = filmListContainer;
     this._changeData = changeData;
+    this._changeMode = changeMode;
 
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
+    this._mode = Mode.DEFAULT;
 
     this._handleWatchlistClick = this._handleWatchlistClick.bind(this);
     this._handleAlreadyWatchedClick = this._handleAlreadyWatchedClick.bind(this);
@@ -49,11 +55,11 @@ export default class Film {
       return;
     }
 
-    if (this._filmListContainer.getElement().contains(prevfilmCardComponent.getElement())) {
+    if (this._mode === Mode.DEFAULT) {
       replace(this._filmCardComponent, prevfilmCardComponent);
     }
 
-    if (this._taskListContainer.getElement().contains(prevfilmDetailsComponent.getElement())) {
+    if (this._mode === Mode.DETAILS) {
       replace(this._filmDetailsComponent, prevfilmDetailsComponent);
     }
 
@@ -66,16 +72,25 @@ export default class Film {
     remove(this._filmDetailsComponent);
   }
 
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._renderCardFilm();
+    }
+  }
+
   _renderCardFilmDetails() {
     render(body, this._filmDetailsComponent, RenderPosition.BEFOREEND);
     document.addEventListener('keydown', this._escKeyDownHandler);
     body.classList.add('hide-overflow');
+    this._changeMode();
+    this._mode = Mode.DETAILS;
   }
 
   _renderCardFilm() {
     remove(this._filmDetailsComponent);
     document.removeEventListener('keydown', this._escKeyDownHandler);
     body.classList.remove('hide-overflow');
+    this._mode = Mode.DEFAULT;
   }
 
   _escKeyDownHandler(evt) {
@@ -127,6 +142,8 @@ export default class Film {
   }
 
   _handleCloseCardFilmDetailClick() {
+    this._changeData();
     this._renderCardFilm();
   }
 }
+
