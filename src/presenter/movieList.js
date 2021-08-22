@@ -73,7 +73,7 @@ export default class Movie {
   }
 
   _renderNoFilm() {
-    render(this._filmsListComponent, this._noFilmsComponent, RenderPosition.BEFOREEND);
+    render(siteMainElement, this._noFilmsComponent, RenderPosition.BEFOREEND);
   }
 
   _handleLoadMoreButtonClick() {
