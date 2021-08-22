@@ -2,8 +2,6 @@ import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
 import {render, RenderPosition, remove, replace} from '../utils/render.js';
 
-const body = document.querySelector('body');
-
 const Mode = {
   DEFAULT: 'DEFAULT',
   DETAILS: 'DETAILS',
@@ -36,6 +34,9 @@ export default class Film {
 
     this._filmCardComponent = new FilmCardView(film);
     this._filmDetailsComponent = new FilmDetailsView(film);
+    this._popup = this._filmDetailsComponent.getElement();
+
+    this.body = document.body;
 
     this._filmCardComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmCardComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
@@ -50,7 +51,7 @@ export default class Film {
     this._filmDetailsComponent.setCloseButtonClickHandler(this._handleCloseCardFilmDetailClick);
 
 
-    if (prevfilmCardComponent === null || prevfilmDetailsComponent === null) {
+    if (prevfilmCardComponent === null) {
       render(this._filmListContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
       return;
     }
@@ -63,13 +64,12 @@ export default class Film {
       replace(this._filmDetailsComponent, prevfilmDetailsComponent);
     }
 
+
     remove(prevfilmCardComponent);
-    remove(prevfilmDetailsComponent);
   }
 
   destroy() {
     remove(this._filmCardComponent);
-    remove(this._filmDetailsComponent);
   }
 
   resetView() {
@@ -79,17 +79,17 @@ export default class Film {
   }
 
   _renderCardFilmDetails() {
-    render(body, this._filmDetailsComponent, RenderPosition.BEFOREEND);
-    document.addEventListener('keydown', this._escKeyDownHandler);
-    body.classList.add('hide-overflow');
     this._changeMode();
+    this.body.appendChild(this._popup);
+    document.addEventListener('keydown', this._escKeyDownHandler);
+    this.body.classList.add('hide-overflow');
     this._mode = Mode.DETAILS;
   }
 
   _renderCardFilm() {
-    remove(this._filmDetailsComponent);
+    this.body.removeChild(this._popup);
     document.removeEventListener('keydown', this._escKeyDownHandler);
-    body.classList.remove('hide-overflow');
+    this.body.classList.remove('hide-overflow');
     this._mode = Mode.DEFAULT;
   }
 
@@ -141,9 +141,7 @@ export default class Film {
     this._renderCardFilmDetails();
   }
 
-  _handleCloseCardFilmDetailClick(film) {
-    this._changeData(film);
+  _handleCloseCardFilmDetailClick() {
     this._renderCardFilm();
   }
 }
-
