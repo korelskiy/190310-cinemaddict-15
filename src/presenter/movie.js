@@ -8,6 +8,7 @@ const Mode = {
   DEFAULT: 'DEFAULT',
   DETAILS: 'DETAILS',
 };
+
 export default class Film {
   constructor(filmListContainer, changeData, changeMode) {
 
@@ -39,14 +40,13 @@ export default class Film {
     this._filmCardComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmCardComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._filmCardComponent.setPosterClickHandler(this._handleCardClick);
+    this._filmCardComponent.setTitleClickHandler(this._handleCardClick);
+    this._filmCardComponent.setCommentsClickHandler(this._handleCardClick);
 
     this._filmDetailsComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmDetailsComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
-
-    this._filmCardComponent.setPosterClickHandler(this._handleCardClick);
-    this._filmCardComponent.setTitleClickHandler(this._handleCardClick);
-    this._filmCardComponent.setCommentsClickHandler(this._handleCardClick);
     this._filmDetailsComponent.setCloseButtonClickHandler(this._handleCloseCardFilmDetailClick);
 
 
@@ -141,8 +141,8 @@ export default class Film {
     this._renderCardFilmDetails();
   }
 
-  _handleCloseCardFilmDetailClick() {
-    this._changeData();
+  _handleCloseCardFilmDetailClick(film) {
+    this._changeData(film);
     this._renderCardFilm();
   }
 }
