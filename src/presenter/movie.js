@@ -64,6 +64,9 @@ export default class Film {
       replace(this._filmCardComponent, prevfilmCardComponent);
       replace(this._filmDetailsComponent, prevfilmDetailsComponent);
     }
+
+    remove(prevfilmCardComponent);
+    remove(prevfilmDetailsComponent);
   }
 
   destroy() {
@@ -77,18 +80,18 @@ export default class Film {
   }
 
   _renderCardFilmDetails() {
-    this._changeMode();
-    this._mode = Mode.DETAILS;
     this.body.appendChild(this._popup);
     document.addEventListener('keydown', this._escKeyDownHandler);
     this.body.classList.add('hide-overflow');
+    this._changeMode();
+    this._mode = Mode.DETAILS;
   }
 
   _renderCardFilm() {
+    this._mode = Mode.DEFAULT;
     this.body.removeChild(this._popup);
     document.removeEventListener('keydown', this._escKeyDownHandler);
     this.body.classList.remove('hide-overflow');
-    this._mode = Mode.DEFAULT;
   }
 
   _escKeyDownHandler(evt) {
@@ -139,8 +142,7 @@ export default class Film {
     this._renderCardFilmDetails();
   }
 
-  _handleCloseCardFilmDetailClick(film) {
-    this._changeData(film);
+  _handleCloseCardFilmDetailClick() {
     this._renderCardFilm();
   }
 }
