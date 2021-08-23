@@ -83,7 +83,7 @@ export default class Movie {
     }
     this._sortFilms(sortType);
     this._clearFilmList();
-    this._renderFilmList();
+    this._renderFilmsPanel();
   }
 
   _renderSort() {
