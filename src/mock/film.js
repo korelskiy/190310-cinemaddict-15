@@ -1,5 +1,6 @@
 import {generateDate} from '../utils/film.js';
 import {getRandomInteger} from '../utils/common.js';
+import {nanoid} from 'nanoid';
 
 const MIN_YEAR_GAP_FILM = 0;
 const MAX_YEAR_GAP_FILM = 50;
@@ -215,7 +216,7 @@ const generateComment = () => {
   const randomIndexCommentText = getRandomInteger(0, commentsText.length - 1);
 
   return {
-    id: 0,
+    id: nanoid(),
     autor: autors[randomIndexAutor],
     comment: commentsText[randomIndexCommentText],
     date: generateDate(MIN_DAY_GAP_COMMENT, MAX_DAY_GAP_COMMENT, 'day'),
@@ -230,7 +231,6 @@ const generateCommentsFilm = () => {
 
   for (let i = 0; i < randomCountComments; i++) {
     const comment = generateComment();
-    comment.id = i;
     comments.push(comment);
   }
 
@@ -241,31 +241,28 @@ const generateCommentsFilm = () => {
 const generateFilm = () => {
   const title = generateFilmTitle();
   return {
-    id: 0,
+    id: nanoid(),
     comments: generateCommentsFilm(),
-    filmInfo: {
-      title: title,
-      alternativeTitle: `Alternative Title For ${title}`,
-      totalRating: getRandomInteger(1, 9).toFixed(1),
-      poster: generateFilmPoster(),
-      ageRating: getRandomInteger(0, 21),
-      director: generateFilmDirector(),
-      writers: generateFilmWriters(),
-      actors: generateFilmActors(),
-      release: {
-        date: generateDate(MIN_YEAR_GAP_FILM, MAX_YEAR_GAP_FILM, 'year'),
-        releaseCountry: generateFilmСountry(),
-      },
-      runtime: getRandomInteger(45, 360),
-      genre: generateFilmGenres(),
-      description: generateFilmDescription(),
-      userDetails: {
-        watchlist: Boolean(getRandomInteger(0, 1)),
-        alreadyWatched: Boolean(getRandomInteger(0, 1)),
-        watchingDate: generateDate(MIN_DAY_GAP_WATCHING_FILM, MAX_DAY_GAP_WATCHING_FILM, 'day'),
-        favorite: Boolean(getRandomInteger(0, 1)),
-      },
+    title: title,
+    alternativeTitle: `Alternative Title For ${title}`,
+    totalRating: getRandomInteger(1, 9).toFixed(1),
+    poster: generateFilmPoster(),
+    ageRating: getRandomInteger(0, 21),
+    director: generateFilmDirector(),
+    writers: generateFilmWriters(),
+    actors: generateFilmActors(),
+    release: {
+      date: generateDate(MIN_YEAR_GAP_FILM, MAX_YEAR_GAP_FILM, 'year'),
+      releaseCountry: generateFilmСountry(),
     },
+    runtime: getRandomInteger(45, 360),
+    genre: generateFilmGenres(),
+    description: generateFilmDescription(),
+    watchlist: Boolean(getRandomInteger(0, 1)),
+    alreadyWatched: Boolean(getRandomInteger(0, 1)),
+    watchingDate: generateDate(MIN_DAY_GAP_WATCHING_FILM, MAX_DAY_GAP_WATCHING_FILM, 'day'),
+    favorite: Boolean(getRandomInteger(0, 1)),
+
   };
 };
 
@@ -275,7 +272,6 @@ export const generateFilms = (count) => {
 
   for (let i = 0; i < count; i++) {
     const film = generateFilm();
-    film.id = i;
     films.push(film);
   }
 
