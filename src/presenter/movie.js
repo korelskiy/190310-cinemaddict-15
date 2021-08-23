@@ -7,6 +7,8 @@ const Mode = {
   DETAILS: 'DETAILS',
 };
 
+const body = document.querySelector('body');
+
 export default class Film {
   constructor(filmListContainer, changeData, changeMode) {
 
@@ -35,8 +37,6 @@ export default class Film {
     this._filmCardComponent = new FilmCardView(film);
     this._filmDetailsComponent = new FilmDetailsView(film);
     this._popup = this._filmDetailsComponent.getElement();
-
-    this.body = document.body;
 
     this._filmCardComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmCardComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
@@ -80,18 +80,21 @@ export default class Film {
   }
 
   _renderCardFilmDetails() {
-    this.body.appendChild(this._popup);
+    if (document.querySelector('.film-details')) {
+      document.querySelector('.film-details').remove();
+    }
+    render(body, this._filmDetailsComponent, RenderPosition.BEFOREEND);
     document.addEventListener('keydown', this._escKeyDownHandler);
-    this.body.classList.add('hide-overflow');
+    body.classList.add('hide-overflow');
     this._changeMode();
     this._mode = Mode.DETAILS;
   }
 
   _renderCardFilm() {
-    this._mode = Mode.DEFAULT;
-    this.body.removeChild(this._popup);
+    remove(this._filmDetailsComponent);
     document.removeEventListener('keydown', this._escKeyDownHandler);
-    this.body.classList.remove('hide-overflow');
+    body.classList.remove('hide-overflow');
+    this._mode = Mode.DEFAULT;
   }
 
   _escKeyDownHandler(evt) {
