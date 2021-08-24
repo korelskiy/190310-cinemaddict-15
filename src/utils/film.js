@@ -19,31 +19,6 @@ export const timeConvert = (time) => {
 // Конвертер времени через dayjs;
 export const getFormatData = (date, format) => dayjs(date).format(format);
 
-// Функция помещает задачи без даты в конце списка,
-// возвращая нужный вес для колбэка sort
-const getWeightForNullDate = (dateA, dateB) => {
-  if (dateA === null && dateB === null) {
-    return 0;
-  }
 
-  if (dateA === null) {
-    return 1;
-  }
-
-  if (dateB === null) {
-    return -1;
-  }
-
-  return null;
-};
-
-export const sortFilmUp = (filmA, filmB) => {
-  const weight = getWeightForNullDate(filmA.release.date, filmB.release.date);
-  if (weight !== null) {
-    return weight;
-  }
-  return dayjs(filmA.release.date).diff(dayjs(filmB.release.date));
-};
-
+export const sortFilmUp = (filmA, filmB) => dayjs(filmB.release.date).diff(dayjs(filmA.release.date));
 export const sortFilmRating = (second, first) => first.totalRating - second.totalRating;
-

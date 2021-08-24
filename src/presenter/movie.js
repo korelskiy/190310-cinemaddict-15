@@ -7,6 +7,8 @@ const Mode = {
   DETAILS: 'DETAILS',
 };
 
+const SELECTOR_POPUP = 'section.film-details';
+const CLASS_HIDE_SCROLL = 'hide-overflow';
 const body = document.querySelector('body');
 
 export default class Film {
@@ -37,7 +39,6 @@ export default class Film {
     this._filmCardComponent = new FilmCardView(film);
     this._filmDetailsComponent = new FilmDetailsView(film);
     this._popup = this._filmDetailsComponent.getElement();
-
     this._filmCardComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmCardComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
@@ -75,33 +76,32 @@ export default class Film {
 
   resetView() {
     if (this._mode !== Mode.DEFAULT) {
-      this._renderCardFilm();
+      this._mode = Mode.DEFAULT;
+    }
+  }
+
+  _closeCardFilmDetails() {
+    const popup = document.querySelector(SELECTOR_POPUP);
+    if (popup) {
+      popup.remove();
+      body.classList.remove(CLASS_HIDE_SCROLL);
+      document.removeEventListener('keydown', this._handlerEscKeyDown);
+      this._mode = Mode.DEFAULT;
     }
   }
 
   _renderCardFilmDetails() {
-    if (document.querySelector('.film-details')) {
-      document.querySelector('.film-details').remove();
-    }
-    render(body, this._filmDetailsComponent, RenderPosition.BEFOREEND);
+    this._closeCardFilmDetails();
     document.addEventListener('keydown', this._escKeyDownHandler);
-    body.classList.add('hide-overflow');
+    body.classList.add(CLASS_HIDE_SCROLL);
+    render(body, this._filmDetailsComponent, RenderPosition.BEFOREEND);
     this._changeMode();
     this._mode = Mode.DETAILS;
   }
 
-  _renderCardFilm() {
-    remove(this._filmDetailsComponent);
-    document.removeEventListener('keydown', this._escKeyDownHandler);
-    body.classList.remove('hide-overflow');
-    this._mode = Mode.DEFAULT;
-  }
-
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
-      this._renderCardFilm();
-      document.removeEventListener('keydown', this._escKeyDownHandler);
+      this._closeCardFilmDetails();
     }
   }
 
@@ -146,6 +146,6 @@ export default class Film {
   }
 
   _handleCloseCardFilmDetailClick() {
-    this._renderCardFilm();
+    this._closeCardFilmDetails();
   }
 }
