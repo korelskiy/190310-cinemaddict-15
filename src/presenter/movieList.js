@@ -27,6 +27,8 @@ export default class Movie {
     this._renderedFilmsExtraCount = EXTRA_FILMS_COUNT;
     this._currentSortType = SortType.DEFAULT;
     this._filmPresenter = new Map();
+    this._filmTopPresenter = new Map();
+    this._filmCommentedPresenter = new Map();
     this._filmsSortComponent = new FilmsSortView();
     this._noFilmsComponent = new NoFilmsView();
     this._filmsComponent = new FilmsView();
@@ -45,7 +47,7 @@ export default class Movie {
   }
 
   init(films) {
-    this._films = films.slice();
+    this._films = films;
     this._sourcedFilmList = films.slice();
     this._topRatedFilms = generateTopFilms(films);
     this._mostCommentedFilms = generateMostCommentedFilms(films);
@@ -59,16 +61,26 @@ export default class Movie {
   _handleFilmChange(updatedFilm) {
     this._films = updateItem(this._films, updatedFilm);
     this._sourcedFilmList = updateItem(this._sourcedFilmList, updatedFilm);
-    this._filmPresenter.get(updatedFilm.id).init(updatedFilm);
+
+    if (this._filmPresenter.get(updatedFilm.id)) {
+      this._filmPresenter.get(updatedFilm.id).init(updatedFilm);
+    }
+    if (this._filmTopPresenter.get(updatedFilm.id)) {
+      this._filmTopPresenter.get(updatedFilm.id).init(updatedFilm);
+    }
+    if (this._filmCommentedPresenter.get(updatedFilm.id)) {
+      this._filmCommentedPresenter.get(updatedFilm.id).init(updatedFilm);
+    }
+
   }
 
   _sortFilms(sortType) {
     switch (sortType) {
       case SortType.DATE:
-        this._films.sort(sortFilmUp);
+        this._films = this._films.sort(sortFilmUp);
         break;
       case SortType.RATING:
-        this._films.sort(sortFilmRating);
+        this._films = this._films.sort(sortFilmRating);
         break;
       default:
         this._films = this._sourcedFilmList.slice();
@@ -97,6 +109,18 @@ export default class Movie {
     this._filmPresenter.set(film.id, moviePresenter);
   }
 
+  _renderTopFilm(filmListContainer, film) {
+    const moviePresenter = new MoviePresenter(filmListContainer, this._handleFilmChange, this._handleModeChange);
+    moviePresenter.init(film);
+    this._filmTopPresenter.set(film.id, moviePresenter);
+  }
+
+  _renderCommentedFilm(filmListContainer, film) {
+    const moviePresenter = new MoviePresenter(filmListContainer, this._handleFilmChange, this._handleModeChange);
+    moviePresenter.init(film);
+    this._filmCommentedPresenter.set(film.id, moviePresenter);
+  }
+
   _renderFilms(filmListContainer, from, to, films) {
     films
       .slice(from, to)
@@ -108,6 +132,7 @@ export default class Movie {
   }
 
   _handleLoadMoreButtonClick() {
+    this._films.slice(this._renderedFilmsCount, this._renderedFilmsCount + FILMS_COUNT_PER_STEP);
     this._renderFilms(this._filmsListContainerComponent, this._renderedFilmsCount, this._renderedFilmsCount + FILMS_COUNT_PER_STEP, this._films);
     this._renderedFilmsCount += FILMS_COUNT_PER_STEP;
     if (this._renderedFilmsCount >= this._films.length) {
@@ -122,6 +147,8 @@ export default class Movie {
 
   _clearFilmList() {
     this._filmPresenter.forEach((presenter) => presenter.destroy());
+    this._filmTopPresenter.forEach((presenter) => presenter.destroy());
+    this._filmCommentedPresenter.forEach((presenter) => presenter.destroy());
     this._filmPresenter.clear();
     this._renderedFilmsCount = FILMS_COUNT_PER_STEP;
     remove(this._loadMoreButtonComponent);
@@ -138,13 +165,13 @@ export default class Movie {
   _renderFilmTop() {
     render(this._filmsComponent, this._filmsTopComponent, RenderPosition.BEFOREEND);
     render(this._filmsTopComponent, this._filmsContainerTopComponent, RenderPosition.BEFOREEND);
-    this._renderFilms(this._filmsContainerTopComponent, 0, this._renderedFilmsExtraCount, this._topRatedFilms);
+    this._topRatedFilms.slice(0, this._renderedFilmsExtraCount).forEach((film) => this._renderTopFilm(this._filmsContainerTopComponent, film));
   }
 
   _renderFilmMostCommented() {
     render(this._filmsComponent, this._filmsMostCommentedComponent, RenderPosition.BEFOREEND);
     render(this._filmsMostCommentedComponent, this._filmsContainerMostCommentedComponent, RenderPosition.BEFOREEND);
-    this._renderFilms(this._filmsContainerMostCommentedComponent, 0, this._renderedFilmsExtraCount, this._mostCommentedFilms);
+    this._mostCommentedFilms.slice(0, this._renderedFilmsExtraCount).forEach((film) => this._renderTopFilm(this._filmsContainerMostCommentedComponent, film));
   }
 
   _renderFilmsPanel() {
