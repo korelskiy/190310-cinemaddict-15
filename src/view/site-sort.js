@@ -25,8 +25,8 @@ export default class FilmsSort extends AbstractView {
     }
     evt.preventDefault();
     const button = evt.target;
-    const SortButtons = this.getElement().querySelectorAll('.sort__button');
-    SortButtons.forEach((sortButton) => {
+    const sortButtons = this.getElement().querySelectorAll('.sort__button');
+    sortButtons.forEach((sortButton) => {
       sortButton.classList.remove('sort__button--active');
     });
     button.classList.add('sort__button--active');
