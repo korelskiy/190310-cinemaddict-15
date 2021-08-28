@@ -38,7 +38,6 @@ export default class Film {
 
     this._filmCardComponent = new FilmCardView(film);
     this._filmDetailsComponent = new FilmDetailsView(film);
-    this._popup = this._filmDetailsComponent.getElement();
     this._filmCardComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmCardComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
@@ -95,6 +94,7 @@ export default class Film {
     document.addEventListener('keydown', this._escKeyDownHandler);
     body.classList.add(CLASS_HIDE_SCROLL);
     render(body, this._filmDetailsComponent, RenderPosition.BEFOREEND);
+    this._filmDetailsComponent.reset(this._film);
     this._changeMode();
     this._mode = Mode.DETAILS;
   }
