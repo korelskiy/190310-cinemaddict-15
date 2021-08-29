@@ -15,6 +15,7 @@ import {render, RenderPosition, remove} from '../utils/render.js';
 import {updateItem} from '../utils/common.js';
 import {sortFilmUp, sortFilmRating} from '../utils/film.js';
 import {SortType} from '../const.js';
+//import SmartView from './smart.js';
 
 const FILMS_COUNT_PER_STEP = 5;
 const EXTRA_FILMS_COUNT = 2;
