@@ -13,11 +13,12 @@ const CLASS_HIDE_SCROLL = 'hide-overflow';
 const body = document.querySelector('body');
 
 export default class Film {
-  constructor(filmListContainer, changeData, changeMode) {
+  constructor(filmListContainer, changeData, changeMode, filmsModel) {
 
     this._filmListContainer = filmListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._filmsModel = filmsModel;
 
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
@@ -80,6 +81,10 @@ export default class Film {
     }
   }
 
+  _getComments() {
+    return this._commentsModel.comments;
+  }
+
   _closeCardFilmDetails() {
     const popup = document.querySelector(SELECTOR_POPUP);
     if (popup) {
@@ -104,6 +109,17 @@ export default class Film {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       this._closeCardFilmDetails();
     }
+  }
+
+  _handleDeleteComment(id) {
+    const commentToDel = this._getComments().find((comment) => comment.id === id);
+    this._changeData(UserAction.DELETE_COMMENT, UpdateType.NONE,
+      commentToDel,
+    );
+    const leftComments = this._film.comments.filter((comment) => comment !== id);
+    this._changeData(UserAction.UPDATE_FILM, UpdateType.PATCH,
+      {...this._film, comments: leftComments},
+    );
   }
 
   _handleWatchlistClick() {
