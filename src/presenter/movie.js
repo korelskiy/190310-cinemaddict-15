@@ -4,6 +4,17 @@ import {render, RenderPosition, remove, replace} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 import {FilterType} from '../const';
 
+/////////////////////////////////////////////////////////////////
+
+// Временно подключил nanoid, generateDate и const для генерации недостоющих данных;
+import {generateDate} from '../utils/film.js';
+import {nanoid} from 'nanoid';
+
+const MIN_DAY_GAP_COMMENT = 0;
+const MAX_DAY_GAP_COMMENT = 180;
+
+//////////////////////////////////////////////////////////////////
+
 const Mode = {
   DEFAULT: 'DEFAULT',
   DETAILS: 'DETAILS',
@@ -32,6 +43,7 @@ export default class Film {
     this._handleCloseCardFilmDetailClick = this._handleCloseCardFilmDetailClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleDeleteComment = this._handleDeleteComment.bind(this);
+    this._handleAddComment = this._handleAddComment.bind(this);
   }
 
   init(film) {
@@ -52,6 +64,7 @@ export default class Film {
     this._filmDetailsComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._filmDetailsComponent.setDeleteCommentListener(this._handleDeleteComment);
+    this._filmDetailsComponent.setAddCommentHandler(this._handleAddComment);
     this._filmDetailsComponent.setCloseButtonClickHandler(this._handleCloseCardFilmDetailClick);
 
     if (prevfilmCardComponent === null) {
@@ -111,11 +124,26 @@ export default class Film {
 
   _handleDeleteComment(id) {
     const commentDel = this._film.comments.find((comment) => comment.id === id);
-    console.log(commentDel);
     this._changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
       {...this._film, comments: commentDel},
+    );
+  }
+
+  _handleAddComment(value, emotion) {
+    const newComment = {
+      id: nanoid(),
+      autor: 'Korelskiy Anton',
+      comment: value,
+      date: generateDate(MIN_DAY_GAP_COMMENT, MAX_DAY_GAP_COMMENT, 'day'),
+      emotion: `./images/emoji/${emotion}.png`,
+    };
+
+    this._changeData(
+      UserAction.ADD_COMMENT,
+      UpdateType.PATCH,
+      {...this._film, comments: newComment},
     );
   }
 

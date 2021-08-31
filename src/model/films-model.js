@@ -31,33 +31,25 @@ export default class FilmsModel extends AbstractObserver {
   }
 
   addComment(updateType, update) {
-    const index = this._films.findIndex((film) => film.id === update.id);
-
-    if (index === -1) {
-      throw new Error(`Can't add comment to unexisting film`);
+    const indexFilm = this._films.findIndex((film) => film.id === update.id);
+    if (indexFilm === -1) {
+      throw new Error('Can\'t update unexisting film');
     }
-    this._films[index].comments = update.comments;
-    this._notify(updateType, update);
+    const newComment = update.comments;
+    this._films[indexFilm].comments = [...this._films[indexFilm].comments, newComment];
+    this._notify(updateType, this._films[indexFilm]);
   }
 
   deleteComment(updateType, update) {
-    const needComments = this._films.filter((film) => film.comments.includes(update));
-    console.log(needComments);
-
-    /*
-    .find((filmComment) => filmComment.id === update.id)
-    const index = this._films.findIndex((film) => film.id === update.id);
-
-    if (index === -1) {
-      throw new Error(`Can't delete unexisting comment`);
+    const indexFilm = this._films.findIndex((film) => film.id === update.id);
+    const indexComment = this._films[indexFilm].comments.findIndex((comment) => comment.id === update.comments.id);
+    if (indexComment === -1) {
+      throw new Error('Can\'t delete unexisting comment');
     }
-
-    this._films = [
-      ...this._films.slice(0, index),
-      update,
-      ...this._films.slice(index + 1),
+    this._films[indexFilm].comments = [
+      ...this._films[indexFilm].comments.slice(0, indexComment),
+      ...this._films[indexFilm].comments.slice(indexComment + 1),
     ];
-    this._notify(updateType, update);
-    */
+    this._notify(updateType, this._films[indexFilm]);
   }
 }

@@ -1,4 +1,4 @@
-//import AbstractView from './abstract.js';
+import he from 'he';
 import SmartView from './smart.js';
 import {timeConvert, getFormatData} from '../utils/film.js';
 
@@ -16,6 +16,11 @@ const createFilmDetailsTemplate = (data) =>  {
     ? 'film-details__control-button--active'
     : '';
 
+  const showEmoji = (emoji) =>
+    `<img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}">
+    <input class="visually-hidden" name="selected-emoji" type="text" id="selected-emoji" value="${emoji}">
+  `;
+
   const getTemplateComments = (commentsFilm) => {
     const getCommentFilmElement = (commentData) => {
       const {autor, comment, date, emotion, id} = commentData;
@@ -25,7 +30,7 @@ const createFilmDetailsTemplate = (data) =>  {
           <img src="${emotion}" width="55" height="55" alt="emoji-smile">
         </span>
         <div>
-          <p class="film-details__comment-text">${comment}</p>
+          <p class="film-details__comment-text">${he.encode(comment)}</p>
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${autor}</span>
             <span class="film-details__comment-day">${commentDate}</span>
@@ -117,7 +122,7 @@ const createFilmDetailsTemplate = (data) =>  {
 
           <div class="film-details__new-comment">
             <div class="film-details__add-emoji-label">
-            ${isEmoji ? `<img src="./images/emoji/${emojiName}.png" width="30" height="30" alt="emoji">` : ''}
+            ${isEmoji ? showEmoji(emojiName) : ''}
             </div>
 
             <label class="film-details__comment-label">
@@ -163,6 +168,7 @@ export default class FilmDetails extends SmartView {
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
     this._descriptionTextAreaHandler = this._descriptionTextAreaHandler.bind(this);
     this._onDeleteCommentClick = this._onDeleteCommentClick.bind(this);
+    this._keyDownCtrlEnterHandler = this._keyDownCtrlEnterHandler.bind(this);
     this._setInnerHandlers();
   }
 
@@ -184,6 +190,7 @@ export default class FilmDetails extends SmartView {
     this.setFavoriteClickHandler(this._callback.favoriteClick);
     this.setCloseButtonClickHandler(this._callback.closeButtonClick);
     this.setDeleteCommentListener(this._callback.deleteCommentClick);
+    this.setAddCommentHandler(this._callback.addCommentSend);
 
   }
 
@@ -224,6 +231,21 @@ export default class FilmDetails extends SmartView {
   _favoriteClickHandler(evt) {
     evt.preventDefault();
     this._callback.favoriteClick();
+  }
+
+  _keyDownCtrlEnterHandler(evt) {
+    const commentArea = this.getElement().querySelector('.film-details__comment-input');
+    const emotion = this.getElement().querySelector('#selected-emoji');
+    const value = commentArea.value;
+    if (evt.ctrlKey && evt.key === 'Enter' && value && commentArea === document.activeElement && emotion) {
+      this._callback.addCommentSend(value, emotion.value);
+      document.removeEventListener('keydown', this._keyDownCtrlEnterHandler);
+    }
+  }
+
+  setAddCommentHandler(callback) {
+    this._callback.addCommentSend = callback;
+    document.addEventListener('keydown', this._keyDownCtrlEnterHandler);
   }
 
   setWatchlistClickHandler(callback) {
