@@ -1,5 +1,4 @@
 import UserProfileView from './view/user-profile.js';
-//import FilmsFiltersView from './view/site-filters.js';
 //import StatisticsView from './view/statistics.js';
 import StatisticsFooterView from './view/site-footer-statistics.js';
 import {generateFilms} from './mock/film.js';
@@ -24,10 +23,6 @@ const siteFooterElement = document.querySelector('.footer');
 const siteFooterStatisticsElement = siteFooterElement.querySelector('.footer__statistics');
 
 render(siteHeaderElement, new UserProfileView(), RenderPosition.BEFOREEND);
-//render(siteMainElement, new FilmsFiltersView(filters, 'all'), RenderPosition.BEFOREEND);
-
-//const movieListPresenter = new MovieListPresenter(filmsModel);
-
 const movieListPresenter = new MovieListPresenter(filmsModel, filterModel);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmsModel);
 
