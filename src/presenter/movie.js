@@ -1,6 +1,19 @@
 import FilmCardView from '../view/film-card.js';
 import FilmDetailsView from '../view/film-details.js';
 import {render, RenderPosition, remove, replace} from '../utils/render.js';
+import {UserAction, UpdateType} from '../const.js';
+import {FilterType} from '../const';
+
+/////////////////////////////////////////////////////////////////
+
+// Временно подключил nanoid, generateDate и const для генерации недостоющих данных;
+import {generateDate} from '../utils/film.js';
+import {nanoid} from 'nanoid';
+
+const MIN_DAY_GAP_COMMENT = 0;
+const MAX_DAY_GAP_COMMENT = 180;
+
+//////////////////////////////////////////////////////////////////
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -12,11 +25,12 @@ const CLASS_HIDE_SCROLL = 'hide-overflow';
 const body = document.querySelector('body');
 
 export default class Film {
-  constructor(filmListContainer, changeData, changeMode) {
+  constructor(filmListContainer, changeData, changeMode, filmsModel) {
 
     this._filmListContainer = filmListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._filmsModel = filmsModel;
 
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
@@ -28,11 +42,12 @@ export default class Film {
     this._handleCardClick = this._handleCardClick.bind(this);
     this._handleCloseCardFilmDetailClick = this._handleCloseCardFilmDetailClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._handleDeleteComment = this._handleDeleteComment.bind(this);
+    this._handleAddComment = this._handleAddComment.bind(this);
   }
 
   init(film) {
     this._film = film;
-
     const prevfilmCardComponent = this._filmCardComponent;
     const prevfilmDetailsComponent = this._filmDetailsComponent;
 
@@ -48,8 +63,9 @@ export default class Film {
     this._filmDetailsComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmDetailsComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
     this._filmDetailsComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._filmDetailsComponent.setDeleteCommentListener(this._handleDeleteComment);
+    this._filmDetailsComponent.setAddCommentHandler(this._handleAddComment);
     this._filmDetailsComponent.setCloseButtonClickHandler(this._handleCloseCardFilmDetailClick);
-
 
     if (prevfilmCardComponent === null) {
       render(this._filmListContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
@@ -71,6 +87,7 @@ export default class Film {
 
   destroy() {
     remove(this._filmCardComponent);
+    remove(this._filmDetailsComponent);
   }
 
   resetView() {
@@ -105,8 +122,35 @@ export default class Film {
     }
   }
 
+  _handleDeleteComment(id) {
+    const commentDel = this._film.comments.find((comment) => comment.id === id);
+    this._changeData(
+      UserAction.DELETE_COMMENT,
+      UpdateType.PATCH,
+      {...this._film, comments: commentDel},
+    );
+  }
+
+  _handleAddComment(value, emotion) {
+    const newComment = {
+      id: nanoid(),
+      autor: 'Korelskiy Anton',
+      comment: value,
+      date: generateDate(MIN_DAY_GAP_COMMENT, MAX_DAY_GAP_COMMENT, 'day'),
+      emotion: `./images/emoji/${emotion}.png`,
+    };
+
+    this._changeData(
+      UserAction.ADD_COMMENT,
+      UpdateType.PATCH,
+      {...this._film, comments: newComment},
+    );
+  }
+
   _handleWatchlistClick() {
     this._changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
       Object.assign(
         {},
         this._film,
@@ -114,11 +158,14 @@ export default class Film {
           watchlist: !this._film.watchlist,
         },
       ),
+      FilterType.WATCHLIST,
     );
   }
 
   _handleAlreadyWatchedClick() {
     this._changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
       Object.assign(
         {},
         this._film,
@@ -126,11 +173,14 @@ export default class Film {
           alreadyWatched: !this._film.alreadyWatched,
         },
       ),
+      FilterType.HISTORY,
     );
   }
 
   _handleFavoriteClick() {
     this._changeData(
+      UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
       Object.assign(
         {},
         this._film,
@@ -138,6 +188,7 @@ export default class Film {
           favorite: !this._film.favorite,
         },
       ),
+      FilterType.FAVORITE,
     );
   }
 
