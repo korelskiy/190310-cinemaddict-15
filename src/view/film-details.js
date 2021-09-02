@@ -221,11 +221,17 @@ export default class FilmDetails extends SmartView {
   _watchlistClickHandler(evt) {
     evt.preventDefault();
     this._callback.watchlistClick();
+    this.updateData({
+      watchlist: !this._data.watchlist,
+    }, true);
   }
 
   _alreadyWatchedClickHandler(evt) {
     evt.preventDefault();
     this._callback.alreadyWatchedClick();
+    this.updateData({
+      alreadyWatched: !this._data.alreadyWatched,
+    }, true);
   }
 
   _favoriteClickHandler(evt) {
@@ -234,7 +240,6 @@ export default class FilmDetails extends SmartView {
     this.updateData({
       favorite: !this._data.favorite,
     }, true);
-
   }
 
   _keyDownCtrlEnterHandler(evt) {

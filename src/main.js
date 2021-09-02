@@ -26,7 +26,7 @@ const siteFooterStatisticsElement = siteFooterElement.querySelector('.footer__st
 render(siteHeaderElement, new UserProfileView(), RenderPosition.BEFOREEND);
 const movieListPresenter = new MovieListPresenter(filmsModel, filterModel);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmsModel);
-const statisticsComponent = new StatisticsView(filmsModel);
+const statisticsComponent = new StatisticsView(filmsModel.getFilms());
 
 filterPresenter.init();
 movieListPresenter.init();
