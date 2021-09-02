@@ -23,4 +23,5 @@ export const FilterType = {
   WATCHLIST: 'watchList',
   HISTORY: 'alreadyWatched',
   FAVORITE: 'favorite',
+  STATS: 'stats',
 };

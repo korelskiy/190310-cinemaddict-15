@@ -259,4 +259,16 @@ export default class Movie {
     this._renderFilmTop();
     this._renderFilmMostCommented();
   }
+
+  hideElement() {
+    this._filmsComponent.hideElement();
+    this._filmsSortComponent.hideElement();
+  }
+
+  showElement() {
+    this._filmsComponent.showElement();
+    this._filmsSortComponent.showElement();
+    this._handleSortTypeChange('default');
+  }
+
 }

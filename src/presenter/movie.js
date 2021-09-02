@@ -67,6 +67,7 @@ export default class Film {
     this._filmDetailsComponent.setAddCommentHandler(this._handleAddComment);
     this._filmDetailsComponent.setCloseButtonClickHandler(this._handleCloseCardFilmDetailClick);
 
+
     if (prevfilmCardComponent === null) {
       render(this._filmListContainer, this._filmCardComponent, RenderPosition.BEFOREEND);
       return;
@@ -80,6 +81,7 @@ export default class Film {
       replace(this._filmCardComponent, prevfilmCardComponent);
       replace(this._filmDetailsComponent, prevfilmDetailsComponent);
     }
+
 
     remove(prevfilmCardComponent);
     remove(prevfilmDetailsComponent);

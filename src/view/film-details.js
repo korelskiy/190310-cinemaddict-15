@@ -231,6 +231,10 @@ export default class FilmDetails extends SmartView {
   _favoriteClickHandler(evt) {
     evt.preventDefault();
     this._callback.favoriteClick();
+    this.updateData({
+      favorite: !this._data.favorite,
+    }, true);
+
   }
 
   _keyDownCtrlEnterHandler(evt) {

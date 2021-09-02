@@ -23,6 +23,7 @@ export default class Filter {
 
     this._filterComponent = new FilterView(filters, this._filterModel.getFilter());
     this._filterComponent.setFilterTypeChangeHandler(this._handleFilterTypeChange);
+    this._filterComponent.setMenuClickHandler(this._handleFilterTypeChange);
 
     if (prevFilterComponent === null) {
       render(this._filterContainer, this._filterComponent, RenderPosition.BEFOREEND);
@@ -38,10 +39,21 @@ export default class Filter {
   }
 
   _handleFilterTypeChange(filterType) {
-    if (this._filterModel.getFilter() === filterType) {
-      return;
+    this._menuTypeChangeHandler(filterType);
+    if (filterType !== 'stats') {
+      if (this._currentFilter === filterType) {
+        return;
+      }
+      if (this._filterModel.getFilter() === filterType) {
+        return;
+      }
+      this._filterModel.setFilter(UpdateType.MAJOR, filterType);
     }
-    this._filterModel.setFilter(UpdateType.MAJOR, filterType);
+  }
+
+  setMenuTypeChangeHandler(callback) {
+    this._menuTypeChangeHandler = callback;
+    this._filterComponent.setMenuClickHandler(this._menuTypeChangeHandler);
   }
 
   _getFilters() {
