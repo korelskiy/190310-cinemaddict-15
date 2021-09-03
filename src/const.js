@@ -23,4 +23,28 @@ export const FilterType = {
   WATCHLIST: 'watchList',
   HISTORY: 'alreadyWatched',
   FAVORITE: 'favorite',
+  STATS: 'stats',
+};
+
+export const Rating = {
+  NOVICE: {
+    name: 'Novice',
+    count: 1,
+  },
+  FAN: {
+    name: 'Fan',
+    count: 11,
+  },
+  MOVIE_BUFF: {
+    name: 'Movie Buff',
+    count: 21,
+  },
+};
+
+export const Period = {
+  ALL: 'all',
+  DAY: 'day',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
 };
