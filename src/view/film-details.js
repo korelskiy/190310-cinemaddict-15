@@ -1,9 +1,12 @@
 import he from 'he';
 import SmartView from './smart.js';
 import {timeConvert, getFormatData} from '../utils/film.js';
+import Comments from '../model/comments.js';
 
 const createFilmDetailsTemplate = (data) =>  {
-  const {title, alternativeTitle, totalRating, director, writers, actors, genre, description, release, runtime, poster, watchlist, ageRating, alreadyWatched, favorite, isEmoji, emojiName, isComments} = data;
+  const {title, alternativeTitle, totalRating, director, writers, actors, genre, description, release, runtime, poster, watchlist, ageRating, alreadyWatched, favorite, isEmoji, emojiName, comments} = data;
+
+  const commentsFilm = Object.values(comments);
 
   const releaseDate = getFormatData(release.date, 'DD MMMM YYYY');
 
@@ -21,7 +24,11 @@ const createFilmDetailsTemplate = (data) =>  {
     <input class="visually-hidden" name="selected-emoji" type="text" id="selected-emoji" value="${emoji}">
   `;
 
-  const getTemplateComments = (commentsFilm) => {
+  const getTemplateComments = (commentsFilms) => {
+    //console.log(commentsFilms);
+    const {autor, text, date, emoji, idMessage} = commentsFilms;
+    //console.log(autor);
+    /*
     const getCommentFilmElement = (commentData) => {
       const {autor, comment, date, emotion, id} = commentData;
       const commentDate = getFormatData(date, 'DD/MM/YYYY hh:mm');
@@ -39,8 +46,17 @@ const createFilmDetailsTemplate = (data) =>  {
         </div>
       </li>`;
     };
-    return commentsFilm.map(getCommentFilmElement).join('');
+    return commentsFilms.map(getCommentFilmElement).join('');
+    */
   };
+
+  commentsFilm.forEach((comment) => {
+    getTemplateComments(comment);
+  });
+
+
+  //const commentsToRender = comments.map((item) => createComment(commentsAll[item], deletingComment, isDeleting)).join(` `);
+
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -50,7 +66,7 @@ const createFilmDetailsTemplate = (data) =>  {
         </div>
         <div class="film-details__info-wrap">
           <div class="film-details__poster">
-            <img class="film-details__poster-img" src="./images/posters/${poster}" alt="">
+            <img class="film-details__poster-img" src="${poster}" alt="">
 
             <p class="film-details__age">${ageRating}+</p>
           </div>
@@ -117,7 +133,7 @@ const createFilmDetailsTemplate = (data) =>  {
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${data.comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
-          ${isComments ? getTemplateComments(data.comments) : ''}
+          {commentsToRender}
           </ul>
 
           <div class="film-details__new-comment">
@@ -160,7 +176,7 @@ export default class FilmDetails extends SmartView {
   constructor(data) {
     super();
     this._data = FilmDetails.parseFilmToData(data);
-    this._comments = this._data.comments;
+    this._commentsModel = new Comments();
     this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._alreadyWatchedClickHandler = this._alreadyWatchedClickHandler.bind(this);
@@ -176,6 +192,12 @@ export default class FilmDetails extends SmartView {
     this.updateData(
       FilmDetails.parseFilmToData(film),
     );
+  }
+
+  setComments(comments) {
+    this.updateData({
+      comments: comments,
+    });
   }
 
 

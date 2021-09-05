@@ -1,21 +1,18 @@
 import UserProfileView from './view/user-profile.js';
 import StatisticsView from './view/statistics.js';
 import StatisticsFooterView from './view/site-footer-statistics.js';
-import {generateFilms} from './mock/film.js';
 import {render, RenderPosition} from './utils/render.js';
 import MovieListPresenter from './presenter/movieList.js';
 import FilmsModel from './model/films-model.js';
 import FilterModel from './model/filter.js';
 import FilterPresenter from './presenter/filter.js';
-import {FilterType} from './const.js';
+import {FilterType, UpdateType, AUTHORIZATION, END_POINT} from './const.js';
+import Api from './api.js';
 
 
-const FILMS_COUNT = 24;
-const films = generateFilms(FILMS_COUNT);
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const filmsModel = new FilmsModel();
-filmsModel.setFilms(films);
-
 const filterModel = new FilterModel();
 
 const siteHeaderElement = document.querySelector('.header');
@@ -28,22 +25,13 @@ const movieListPresenter = new MovieListPresenter(filmsModel, filterModel);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmsModel);
 const statisticsComponent = new StatisticsView(filmsModel.getFilms());
 
-filterPresenter.init();
-movieListPresenter.init();
-
 render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
-statisticsComponent.hideElement();
-
 
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case FilterType.STATS:
       movieListPresenter.hideElement();
       statisticsComponent.showElement();
-      // Показать статистику
-      //statComponent.updateElement();
-      //statComponent.setPeriodTypeChangeHandler();
-      //filmsPresenter.updateFooter();
       break;
     default:
       movieListPresenter.showElement();
@@ -51,6 +39,17 @@ const handleSiteMenuClick = (menuItem) => {
   }
 };
 
-filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
-
-render(siteFooterStatisticsElement, new StatisticsFooterView(films.length), RenderPosition.BEFOREEND);
+api.getFilms()
+  .then((films) => {
+    filterPresenter.init();
+    filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
+    filmsModel.setFilms(UpdateType.INIT, films);
+    render(siteFooterStatisticsElement, new StatisticsFooterView(films.length), RenderPosition.BEFOREEND);
+    statisticsComponent.hideElement();
+  })
+  .catch(() => {
+    filterPresenter.init();
+    filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
+    filmsModel.setFilms(UpdateType.INIT, []);
+    statisticsComponent.hideElement();
+  });

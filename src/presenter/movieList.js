@@ -9,10 +9,12 @@ import FilmsListView from '../view/site-films-list.js';
 import FilmsListContainerView from '../view/site-films-list-container.js';
 import FilmsSortView from '../view/site-sort.js';
 import NoFilmsView from '../view/no-films.js';
+import LoadingView from '../view/loading.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import {sortFilmUp, sortFilmRating} from '../utils/film.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {filter} from '../utils/filter.js';
+
 
 const FILMS_COUNT_PER_STEP = 5;
 const EXTRA_FILMS_COUNT = 2;
@@ -23,6 +25,7 @@ export default class Movie {
   constructor(filmsModel, filterModel) {
     this._filmsModel = filmsModel;
     this._filterModel = filterModel;
+    this._isLoading = true;
     this._filterType = FilterType.ALL;
     this._renderedFilmsCount = FILMS_COUNT_PER_STEP;
     this._renderedFilmsExtraCount = EXTRA_FILMS_COUNT;
@@ -40,6 +43,7 @@ export default class Movie {
     this._filmsMostCommentedComponent = new FilmsMostCommentedView();
     this._filmsContainerMostCommentedComponent = new FilmsContainerMostCommentedView();
     this._filmsContainerTopComponent = new FilmsContainerTopView();
+    this._loadingComponent = new LoadingView();
 
     this._handleLoadMoreButtonClick = this._handleLoadMoreButtonClick.bind(this);
     this._handleViewAction = this._handleViewAction.bind(this);
@@ -110,6 +114,11 @@ export default class Movie {
         this._clearFilmsPanel({resetRenderedFilmCount: true, resetSortType: true});
         this._renderFilmsPanel();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderFilmsPanel();
+        break;
     }
   }
 
@@ -159,6 +168,10 @@ export default class Movie {
     render(siteMainElement, this._noFilmsComponent, RenderPosition.BEFOREEND);
   }
 
+  _renderLoading() {
+    render(siteMainElement, this._loadingComponent, RenderPosition.BEFOREEND);
+  }
+
   _handleLoadMoreButtonClick() {
     const filmCount = this._getFilms().length;
     const newRenderedFilmCount = Math.min(filmCount, this._renderedFilmsCount + FILMS_COUNT_PER_STEP);
@@ -186,12 +199,6 @@ export default class Movie {
     this._filmPresenter.clear();
     this._renderedFilmsCount = FILMS_COUNT_PER_STEP;
     remove(this._loadMoreButtonComponent);
-  }
-
-  _renderFilmList() {
-    const filmCount = this._getFilms().length;
-    const films = this._getFilms().slice(0, Math.min(filmCount, FILMS_COUNT_PER_STEP));
-    this._renderFilms(this._filmsListContainerComponent, films);
   }
 
   _renderFilmTop() {
@@ -239,9 +246,14 @@ export default class Movie {
   }
 
   _renderFilmsPanel() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
+
     const films = this._getFilms();
     const filmsCount = films.length;
-
     if (filmsCount === 0) {
       this._renderNoFilm();
       return;
@@ -252,7 +264,7 @@ export default class Movie {
     render(this._filmsComponent, this._filmsListComponent, RenderPosition.BEFOREEND);
     render(this._filmsListComponent, this._filmsListContainerComponent, RenderPosition.BEFOREEND);
 
-    this._renderFilmList(films.slice(0, Math.min(filmsCount, this._renderedFilmsCount)));
+    this._renderFilms(this._filmsListContainerComponent, films.slice(0, Math.min(filmsCount, this._renderedFilmsCount)));
     if (filmsCount > this._renderedFilmsCount) {
       this._renderMoreButton();
     }

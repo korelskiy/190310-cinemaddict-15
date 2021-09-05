@@ -3,7 +3,13 @@ import FilmDetailsView from '../view/film-details.js';
 import {render, RenderPosition, remove, replace} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 import {FilterType} from '../const';
+import ApiComments from '../api-comments.js';
+import {AUTHORIZATION, END_POINT} from '../const.js';
+import CommentsModel from '../model/comments.js';
 
+const apiComments = new ApiComments(END_POINT, AUTHORIZATION);
+
+const commentsModel = new CommentsModel();
 /////////////////////////////////////////////////////////////////
 
 // Временно подключил nanoid, generateDate и const для генерации недостоющих данных;
@@ -31,7 +37,6 @@ export default class Film {
     this._changeData = changeData;
     this._changeMode = changeMode;
     this._filmsModel = filmsModel;
-
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
     this._mode = Mode.DEFAULT;
@@ -51,8 +56,8 @@ export default class Film {
     const prevfilmCardComponent = this._filmCardComponent;
     const prevfilmDetailsComponent = this._filmDetailsComponent;
 
-    this._filmCardComponent = new FilmCardView(film);
-    this._filmDetailsComponent = new FilmDetailsView(film);
+    this._filmCardComponent = new FilmCardView(this._film);
+    this._filmDetailsComponent = new FilmDetailsView(this._film);
     this._filmCardComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmCardComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
@@ -109,6 +114,17 @@ export default class Film {
   }
 
   _renderCardFilmDetails() {
+    apiComments.getComments(this._film).then((comments) => {
+      for (let key in comments) {
+        console.log(comments[key]);
+      }
+    });
+    /*
+    apiComments.getComments(this._film)
+      .then((comments) => {
+        this._filmDetailsComponent.setComments(comments);
+      });
+    */
     this._closeCardFilmDetails();
     document.addEventListener('keydown', this._escKeyDownHandler);
     body.classList.add(CLASS_HIDE_SCROLL);

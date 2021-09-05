@@ -15,6 +15,7 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 
@@ -48,3 +49,6 @@ export const Period = {
   MONTH: 'month',
   YEAR: 'year',
 };
+
+export const AUTHORIZATION = 'Basic qwerty45330qwerty';
+export const END_POINT = 'https://15.ecmascript.pages.academy/cinemaddict';
