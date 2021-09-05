@@ -1,4 +1,4 @@
-import he from 'he';
+//import he from 'he';
 import SmartView from './smart.js';
 import {timeConvert, getFormatData} from '../utils/film.js';
 import Comments from '../model/comments.js';
@@ -25,10 +25,9 @@ const createFilmDetailsTemplate = (data) =>  {
   `;
 
   const getTemplateComments = (commentsFilms) => {
-    //console.log(commentsFilms);
-    const {autor, text, date, emoji, idMessage} = commentsFilms;
-    //console.log(autor);
     /*
+    //console.log(commentsFilms);
+
     const getCommentFilmElement = (commentData) => {
       const {autor, comment, date, emotion, id} = commentData;
       const commentDate = getFormatData(date, 'DD/MM/YYYY hh:mm');

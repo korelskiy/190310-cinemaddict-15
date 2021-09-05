@@ -5,11 +5,11 @@ import {UserAction, UpdateType} from '../const.js';
 import {FilterType} from '../const';
 import ApiComments from '../api-comments.js';
 import {AUTHORIZATION, END_POINT} from '../const.js';
-import CommentsModel from '../model/comments.js';
+//import CommentsModel from '../model/comments.js';
 
 const apiComments = new ApiComments(END_POINT, AUTHORIZATION);
 
-const commentsModel = new CommentsModel();
+//const commentsModel = new CommentsModel();
 /////////////////////////////////////////////////////////////////
 
 // Временно подключил nanoid, generateDate и const для генерации недостоющих данных;
@@ -114,9 +114,10 @@ export default class Film {
   }
 
   _renderCardFilmDetails() {
+    /*
     apiComments.getComments(this._film).then((comments) => {
-      for (let key in comments) {
-        console.log(comments[key]);
+      for (const key in comments) {
+        //console.log(comments[key]);
       }
     });
     /*

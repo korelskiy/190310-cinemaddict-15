@@ -16,7 +16,6 @@ export default class Comments extends AbstractObserver {
       {},
       _comments,
     );
-    console.log(this._comments);
   }
 
   getComments() {

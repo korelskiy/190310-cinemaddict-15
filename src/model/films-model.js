@@ -30,7 +30,7 @@ export default class FilmsModel extends AbstractObserver {
 
     this._notify(updateType, update);
   }
-/*
+  /*
   addComment(updateType, update) {
     const indexFilm = this._films.findIndex((film) => film.id === update.id);
     if (indexFilm === -1) {
