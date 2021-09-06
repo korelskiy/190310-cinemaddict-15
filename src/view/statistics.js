@@ -73,6 +73,7 @@ const renderChart = (statisticCtx, {films, date: {from, to}}) => {
 
 
 const createStatisticsTemplate = ({films, date: {from, to}}) =>  {
+  console.log(films);
   const rank = getRatingByWatched(filter[FilterType.HISTORY](films).length);
 
   const watchedFilmsByTime = filter[FilterType.HISTORY](filterWatchedFilmsByTime(films, from, to));

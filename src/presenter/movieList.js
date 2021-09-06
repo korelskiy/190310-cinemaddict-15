@@ -22,9 +22,11 @@ const EXTRA_FILMS_COUNT = 2;
 const siteMainElement = document.querySelector('.main');
 
 export default class Movie {
-  constructor(filmsModel, filterModel) {
+  constructor(filmsModel, filterModel, commentsModel, api) {
     this._filmsModel = filmsModel;
     this._filterModel = filterModel;
+    this._commentsModel = commentsModel;
+    this._api = api;
     this._isLoading = true;
     this._filterType = FilterType.ALL;
     this._renderedFilmsCount = FILMS_COUNT_PER_STEP;
@@ -142,7 +144,7 @@ export default class Movie {
   }
 
   _renderFilm(filmListContainer, film) {
-    const moviePresenter = new MoviePresenter(filmListContainer, this._handleViewAction, this._handleModeChange, this._filmsModel);
+    const moviePresenter = new MoviePresenter(filmListContainer, this._handleViewAction, this._handleModeChange, this._filmsModel, this._commentsModel, this._api);
     moviePresenter.init(film);
     this._filmPresenter.set(film.id, moviePresenter);
   }

@@ -3,13 +3,8 @@ import FilmDetailsView from '../view/film-details.js';
 import {render, RenderPosition, remove, replace} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 import {FilterType} from '../const';
-import ApiComments from '../api-comments.js';
-import {AUTHORIZATION, END_POINT} from '../const.js';
-//import CommentsModel from '../model/comments.js';
 
-const apiComments = new ApiComments(END_POINT, AUTHORIZATION);
 
-//const commentsModel = new CommentsModel();
 /////////////////////////////////////////////////////////////////
 
 // Временно подключил nanoid, generateDate и const для генерации недостоющих данных;
@@ -31,12 +26,14 @@ const CLASS_HIDE_SCROLL = 'hide-overflow';
 const body = document.querySelector('body');
 
 export default class Film {
-  constructor(filmListContainer, changeData, changeMode, filmsModel) {
+  constructor(filmListContainer, changeData, changeMode, filmsModel, commentsModel, api) {
 
     this._filmListContainer = filmListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
     this._filmsModel = filmsModel;
+    this._commentsModel = commentsModel;
+    this._api = api;
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
     this._mode = Mode.DEFAULT;
@@ -103,6 +100,12 @@ export default class Film {
     }
   }
 
+  _getApiComments() {
+    this._api.getComments(this._film.id)
+      .then((comment) => this._commentsModel.comments = comment)
+      .then((comment) => this._filmDetailsComponent.setComments(comment));
+  }
+
   _closeCardFilmDetails() {
     const popup = document.querySelector(SELECTOR_POPUP);
     if (popup) {
@@ -114,19 +117,8 @@ export default class Film {
   }
 
   _renderCardFilmDetails() {
-    /*
-    apiComments.getComments(this._film).then((comments) => {
-      for (const key in comments) {
-        //console.log(comments[key]);
-      }
-    });
-    /*
-    apiComments.getComments(this._film)
-      .then((comments) => {
-        this._filmDetailsComponent.setComments(comments);
-      });
-    */
     this._closeCardFilmDetails();
+    this._getApiComments();
     document.addEventListener('keydown', this._escKeyDownHandler);
     body.classList.add(CLASS_HIDE_SCROLL);
     render(body, this._filmDetailsComponent, RenderPosition.BEFOREEND);

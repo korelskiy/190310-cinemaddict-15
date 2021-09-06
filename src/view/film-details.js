@@ -1,12 +1,11 @@
-//import he from 'he';
+import he from 'he';
 import SmartView from './smart.js';
 import {timeConvert, getFormatData} from '../utils/film.js';
-import Comments from '../model/comments.js';
+
 
 const createFilmDetailsTemplate = (data) =>  {
-  const {title, alternativeTitle, totalRating, director, writers, actors, genre, description, release, runtime, poster, watchlist, ageRating, alreadyWatched, favorite, isEmoji, emojiName, comments} = data;
+  const {title, alternativeTitle, totalRating, director, writers, actors, genre, description, release, runtime, poster, watchlist, ageRating, alreadyWatched, favorite, isEmoji, emojiName, comments, isComments} = data;
 
-  const commentsFilm = Object.values(comments);
 
   const releaseDate = getFormatData(release.date, 'DD MMMM YYYY');
 
@@ -25,20 +24,17 @@ const createFilmDetailsTemplate = (data) =>  {
   `;
 
   const getTemplateComments = (commentsFilms) => {
-    /*
-    //console.log(commentsFilms);
-
     const getCommentFilmElement = (commentData) => {
-      const {autor, comment, date, emotion, id} = commentData;
+      const {author, comment, date, emotion, id} = commentData;
       const commentDate = getFormatData(date, 'DD/MM/YYYY hh:mm');
       return `<li class="film-details__comment" data-comment-id=${id}>
         <span class="film-details__comment-emoji">
-          <img src="${emotion}" width="55" height="55" alt="emoji-smile">
+          <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-smile">
         </span>
         <div>
           <p class="film-details__comment-text">${he.encode(comment)}</p>
           <p class="film-details__comment-info">
-            <span class="film-details__comment-author">${autor}</span>
+            <span class="film-details__comment-author">${author}</span>
             <span class="film-details__comment-day">${commentDate}</span>
             <button class="film-details__comment-delete" data-comment-id=${id}>Delete</button>
           </p>
@@ -46,15 +42,7 @@ const createFilmDetailsTemplate = (data) =>  {
       </li>`;
     };
     return commentsFilms.map(getCommentFilmElement).join('');
-    */
   };
-
-  commentsFilm.forEach((comment) => {
-    getTemplateComments(comment);
-  });
-
-
-  //const commentsToRender = comments.map((item) => createComment(commentsAll[item], deletingComment, isDeleting)).join(` `);
 
 
   return `<section class="film-details">
@@ -132,7 +120,7 @@ const createFilmDetailsTemplate = (data) =>  {
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${data.comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
-          {commentsToRender}
+          ${isComments ? getTemplateComments(comments) : ''}
           </ul>
 
           <div class="film-details__new-comment">
@@ -175,7 +163,6 @@ export default class FilmDetails extends SmartView {
   constructor(data) {
     super();
     this._data = FilmDetails.parseFilmToData(data);
-    this._commentsModel = new Comments();
     this._closeButtonClickHandler = this._closeButtonClickHandler.bind(this);
     this._watchlistClickHandler = this._watchlistClickHandler.bind(this);
     this._alreadyWatchedClickHandler = this._alreadyWatchedClickHandler.bind(this);
@@ -196,7 +183,9 @@ export default class FilmDetails extends SmartView {
   setComments(comments) {
     this.updateData({
       comments: comments,
+      isComments: true,
     });
+
   }
 
 
@@ -320,7 +309,7 @@ export default class FilmDetails extends SmartView {
       {},
       film,
       {
-        isComments: film.comments.length > 0,
+        isComments: false,
         isEmoji: false,
         emojiName: null,
       },
