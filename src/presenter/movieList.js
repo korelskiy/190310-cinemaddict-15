@@ -83,7 +83,9 @@ export default class Movie {
     switch (actionType) {
       case UserAction.UPDATE_FILM: {
         const newUpdateType = this._filterModel.getFilter() === buttonType ? UpdateType.MINOR : updateType;
-        this._filmsModel.updateFilm(newUpdateType, update);
+        this._api.updateFilm(update).then((response) => {
+          this._filmsModel.updateFilm(newUpdateType, response);
+        });
         break;
       }
       case UserAction.ADD_COMMENT:
@@ -150,13 +152,13 @@ export default class Movie {
   }
 
   _renderTopFilm(filmListContainer, film) {
-    const moviePresenter = new MoviePresenter(filmListContainer, this._handleViewAction, this._handleModeChange, this._filmsModel);
+    const moviePresenter = new MoviePresenter(filmListContainer, this._handleViewAction, this._handleModeChange, this._filmsModel, this._commentsModel, this._api);
     moviePresenter.init(film);
     this._filmTopPresenter.set(film.id, moviePresenter);
   }
 
   _renderCommentedFilm(filmListContainer, film) {
-    const moviePresenter = new MoviePresenter(filmListContainer, this._handleViewAction, this._handleModeChange, this._filmsModel);
+    const moviePresenter = new MoviePresenter(filmListContainer, this._handleViewAction, this._handleModeChange, this._filmsModel, this._commentsModel, this._api);
     moviePresenter.init(film);
     this._filmCommentedPresenter.set(film.id, moviePresenter);
   }

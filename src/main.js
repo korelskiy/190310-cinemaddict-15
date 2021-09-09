@@ -29,31 +29,32 @@ render(siteHeaderElement, new UserProfileView(), RenderPosition.BEFOREEND);
 const movieListPresenter = new MovieListPresenter(filmsModel, filterModel, commentsModel, api);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmsModel);
 
-const statisticsComponent = new StatisticsView(filmsModel.getFilms());
 
-
+let statisticsComponent = null;
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case FilterType.STATS:
       movieListPresenter.hideElement();
-      statisticsComponent.showElement();
+      statisticsComponent = new StatisticsView(filmsModel.getFilms());
+      render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
       break;
     default:
+      if (statisticsComponent) {
+        statisticsComponent.hideElement();
+      }
       movieListPresenter.showElement();
-      statisticsComponent.hideElement();
   }
 };
+
 
 api.getFilms()
   .then((films) => {
     filterPresenter.init();
-    filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
     filmsModel.setFilms(UpdateType.INIT, films);
-    render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
+    filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
+
     render(siteFooterStatisticsElement, new StatisticsFooterView(films.length), RenderPosition.BEFOREEND);
-    statisticsComponent.hideElement();
   })
   .catch(() => {
     filmsModel.setFilms(UpdateType.INIT, []);
-    statisticsComponent.hideElement();
   });

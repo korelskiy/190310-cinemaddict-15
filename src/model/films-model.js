@@ -30,7 +30,7 @@ export default class FilmsModel extends AbstractObserver {
 
     this._notify(updateType, update);
   }
-  /*
+
   addComment(updateType, update) {
     const indexFilm = this._films.findIndex((film) => film.id === update.id);
     if (indexFilm === -1) {
@@ -53,8 +53,6 @@ export default class FilmsModel extends AbstractObserver {
     ];
     this._notify(updateType, this._films[indexFilm]);
   }
-
-  */
 
   static adaptToClient(film) {
     const adaptedFilm = Object.assign(
@@ -116,7 +114,7 @@ export default class FilmsModel extends AbstractObserver {
         'user_details': {
           'watchlist': film.watchlist,
           'already_watched': film.alreadyWatched,
-          'watching_date': film.watchingDate.toISOString(),
+          'watching_date': film.watchingDate,
           'favorite': film.favorite,
         },
       },

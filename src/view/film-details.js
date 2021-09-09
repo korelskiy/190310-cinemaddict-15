@@ -185,7 +185,6 @@ export default class FilmDetails extends SmartView {
       comments: comments,
       isComments: true,
     });
-
   }
 
 
