@@ -13,6 +13,7 @@ import {FilterType, UpdateType, AUTHORIZATION, END_POINT} from './const.js';
 import Api from './api.js';
 
 
+const SELECTOR_STATS = '.statistic';
 const api = new Api(END_POINT, AUTHORIZATION);
 
 const filmsModel = new FilmsModel();
@@ -38,11 +39,13 @@ const handleSiteMenuClick = (menuItem) => {
       statisticsComponent = new StatisticsView(filmsModel.getFilms());
       render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
       break;
-    default:
-      if (statisticsComponent) {
-        statisticsComponent.hideElement();
+    default: {
+      const statsBlock = document.querySelector(SELECTOR_STATS);
+      if (statsBlock) {
+        statsBlock.remove();
       }
       movieListPresenter.showElement();
+    }
   }
 };
 
