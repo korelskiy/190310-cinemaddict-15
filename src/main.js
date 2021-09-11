@@ -1,22 +1,24 @@
 import UserProfileView from './view/user-profile.js';
 import StatisticsView from './view/statistics.js';
 import StatisticsFooterView from './view/site-footer-statistics.js';
-import {generateFilms} from './mock/film.js';
 import {render, RenderPosition} from './utils/render.js';
 import MovieListPresenter from './presenter/movieList.js';
+
 import FilmsModel from './model/films-model.js';
 import FilterModel from './model/filter.js';
+import CommentsModel from './model/comments-model.js';
+
 import FilterPresenter from './presenter/filter.js';
-import {FilterType} from './const.js';
+import {FilterType, UpdateType, AUTHORIZATION, END_POINT} from './const.js';
+import Api from './api.js';
 
 
-const FILMS_COUNT = 24;
-const films = generateFilms(FILMS_COUNT);
+const SELECTOR_STATS = '.statistic';
+const api = new Api(END_POINT, AUTHORIZATION);
 
 const filmsModel = new FilmsModel();
-filmsModel.setFilms(films);
-
 const filterModel = new FilterModel();
+const commentsModel = new CommentsModel();
 
 const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
@@ -24,33 +26,38 @@ const siteFooterElement = document.querySelector('.footer');
 const siteFooterStatisticsElement = siteFooterElement.querySelector('.footer__statistics');
 
 render(siteHeaderElement, new UserProfileView(), RenderPosition.BEFOREEND);
-const movieListPresenter = new MovieListPresenter(filmsModel, filterModel);
+
+const movieListPresenter = new MovieListPresenter(filmsModel, filterModel, commentsModel, api);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmsModel);
-const statisticsComponent = new StatisticsView(filmsModel.getFilms());
-
-filterPresenter.init();
-movieListPresenter.init();
-
-render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
-statisticsComponent.hideElement();
 
 
+let statisticsComponent = null;
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case FilterType.STATS:
       movieListPresenter.hideElement();
-      statisticsComponent.showElement();
-      // Показать статистику
-      //statComponent.updateElement();
-      //statComponent.setPeriodTypeChangeHandler();
-      //filmsPresenter.updateFooter();
+      statisticsComponent = new StatisticsView(filmsModel.getFilms());
+      render(siteMainElement, statisticsComponent, RenderPosition.BEFOREEND);
       break;
-    default:
+    default: {
+      const statsBlock = document.querySelector(SELECTOR_STATS);
+      if (statsBlock) {
+        statsBlock.remove();
+      }
       movieListPresenter.showElement();
-      statisticsComponent.hideElement();
+    }
   }
 };
 
-filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
 
-render(siteFooterStatisticsElement, new StatisticsFooterView(films.length), RenderPosition.BEFOREEND);
+api.getFilms()
+  .then((films) => {
+    filterPresenter.init();
+    filmsModel.setFilms(UpdateType.INIT, films);
+    filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
+
+    render(siteFooterStatisticsElement, new StatisticsFooterView(films.length), RenderPosition.BEFOREEND);
+  })
+  .catch(() => {
+    filmsModel.setFilms(UpdateType.INIT, []);
+  });

@@ -4,6 +4,7 @@ import {render, RenderPosition, remove, replace} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 import {FilterType} from '../const';
 
+
 /////////////////////////////////////////////////////////////////
 
 // Временно подключил nanoid, generateDate и const для генерации недостоющих данных;
@@ -25,13 +26,14 @@ const CLASS_HIDE_SCROLL = 'hide-overflow';
 const body = document.querySelector('body');
 
 export default class Film {
-  constructor(filmListContainer, changeData, changeMode, filmsModel) {
+  constructor(filmListContainer, changeData, changeMode, filmsModel, commentsModel, api) {
 
     this._filmListContainer = filmListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
     this._filmsModel = filmsModel;
-
+    this._commentsModel = commentsModel;
+    this._api = api;
     this._filmCardComponent = null;
     this._filmDetailsComponent = null;
     this._mode = Mode.DEFAULT;
@@ -51,8 +53,8 @@ export default class Film {
     const prevfilmCardComponent = this._filmCardComponent;
     const prevfilmDetailsComponent = this._filmDetailsComponent;
 
-    this._filmCardComponent = new FilmCardView(film);
-    this._filmDetailsComponent = new FilmDetailsView(film);
+    this._filmCardComponent = new FilmCardView(this._film);
+    this._filmDetailsComponent = new FilmDetailsView(this._film);
     this._filmCardComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmCardComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
@@ -98,6 +100,12 @@ export default class Film {
     }
   }
 
+  _getApiComments() {
+    this._api.getComments(this._film.id)
+      .then((comment) => this._commentsModel.comments = comment)
+      .then((comment) => this._filmDetailsComponent.setComments(comment));
+  }
+
   _closeCardFilmDetails() {
     const popup = document.querySelector(SELECTOR_POPUP);
     if (popup) {
@@ -110,6 +118,7 @@ export default class Film {
 
   _renderCardFilmDetails() {
     this._closeCardFilmDetails();
+    this._getApiComments();
     document.addEventListener('keydown', this._escKeyDownHandler);
     body.classList.add(CLASS_HIDE_SCROLL);
     render(body, this._filmDetailsComponent, RenderPosition.BEFOREEND);

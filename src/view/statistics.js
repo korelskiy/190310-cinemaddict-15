@@ -73,6 +73,7 @@ const renderChart = (statisticCtx, {films, date: {from, to}}) => {
 
 
 const createStatisticsTemplate = ({films, date: {from, to}}) =>  {
+
   const rank = getRatingByWatched(filter[FilterType.HISTORY](films).length);
 
   const watchedFilmsByTime = filter[FilterType.HISTORY](filterWatchedFilmsByTime(films, from, to));
@@ -124,11 +125,16 @@ const createStatisticsTemplate = ({films, date: {from, to}}) =>  {
 export default class Statistics extends SmartView {
   constructor(films) {
     super();
+    this._films = films;
     this._data = {films, date: getDatePeriod()};
     this._chart = null;
     this._setChart();
     this._changePeriod();
     this._radioValue = Period.ALL;
+  }
+
+  setFilms(films) {
+    this._films = films;
   }
 
   restoreHandlers() {
