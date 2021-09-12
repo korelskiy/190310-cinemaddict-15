@@ -41,9 +41,9 @@ export default class FilmsModel extends AbstractObserver {
     this._notify(updateType, this._films[indexFilm]);
   }
 
-  deleteComment(updateType, update) {
-    const indexFilm = this._films.findIndex((film) => film.id === update.id);
-    const indexComment = this._films[indexFilm].comments.findIndex((comment) => comment.id === update.comments.id);
+  deleteComment(updateType, idComments, updateFilms) {
+    const indexFilm = this._films.findIndex((film) => film.id === updateFilms.id);
+    const indexComment = this._films[indexFilm].comments.findIndex((comment) => comment === idComments);
     if (indexComment === -1) {
       throw new Error('Can\'t delete unexisting comment');
     }

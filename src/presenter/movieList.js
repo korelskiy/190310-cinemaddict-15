@@ -1,4 +1,4 @@
-import MoviePresenter from './movie.js';
+import MoviePresenter, {State as MoviePresenterViewState} from './movie.js';
 import MoreButtonView from '../view/show-more-button.js';
 import FilmsMostCommentedView from '../view/site-films-most.js';
 import FilmsContainerMostCommentedView from '../view/site-films-container-most.js';
@@ -55,6 +55,7 @@ export default class Movie {
 
     this._filmsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+    this._commentsModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -79,20 +80,39 @@ export default class Movie {
     this._filmPresenter.forEach((presenter) => presenter.resetView());
   }
 
-  _handleViewAction(actionType, updateType, update, buttonType) {
+  _handleViewAction(actionType, updateType, update, film) {
     switch (actionType) {
       case UserAction.UPDATE_FILM: {
-        const newUpdateType = this._filterModel.getFilter() === buttonType ? UpdateType.MINOR : updateType;
-        this._api.updateFilm(update).then((response) => {
-          this._filmsModel.updateFilm(newUpdateType, response);
-        });
+        this._filmPresenter.get(update.id).setViewState(MoviePresenterViewState.SAVING);
+        const newUpdateType = this._filterModel.getFilter() === film ? UpdateType.MINOR : updateType;
+        this._api.updateFilm(update)
+          .then((response) => {
+            this._filmsModel.updateFilm(newUpdateType, response);
+          })
+          .catch(() => {
+            this._filmPresenter.get(film.id).setViewState(MoviePresenterViewState.ABORTING);
+          });
         break;
       }
       case UserAction.ADD_COMMENT:
-        this._filmsModel.addComment(updateType, update);
+        this._filmPresenter.get(film.id).setViewState(MoviePresenterViewState.SAVING);
+        this._api.addComment(update, film.id)
+          .then((response) => {
+            this._filmsModel.addComment(updateType, response.movie);
+          })
+          .catch(() => {
+            this._filmPresenter.get(film.id).setViewState(MoviePresenterViewState.ABORTING);
+          });
         break;
       case UserAction.DELETE_COMMENT:
-        this._filmsModel.deleteComment(updateType, update);
+        this._filmPresenter.get(film.id).setViewState(MoviePresenterViewState.DELETING);
+        this._api.deleteComment(update)
+          .then(() => {
+            this._filmsModel.deleteComment(updateType, update, film);
+          })
+          .catch(() => {
+            this._filmPresenter.get(film.id).setViewState(MoviePresenterViewState.ABORTING);
+          });
         break;
     }
   }
@@ -254,8 +274,6 @@ export default class Movie {
       this._renderLoading();
       return;
     }
-
-
     const films = this._getFilms();
     const filmsCount = films.length;
     if (filmsCount === 0) {

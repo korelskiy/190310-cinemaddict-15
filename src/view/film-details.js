@@ -4,7 +4,7 @@ import {timeConvert, getFormatData} from '../utils/film.js';
 
 
 const createFilmDetailsTemplate = (data) =>  {
-  const {title, alternativeTitle, totalRating, director, writers, actors, genre, description, release, runtime, poster, watchlist, ageRating, alreadyWatched, favorite, isEmoji, emojiName, comments, isComments} = data;
+  const {title, alternativeTitle, totalRating, director, writers, actors, genre, description, release, runtime, poster, watchlist, ageRating, alreadyWatched, favorite, isEmoji, emojiName, comments, isComments, isDisabled, isDeleting} = data;
 
 
   const releaseDate = getFormatData(release.date, 'DD MMMM YYYY');
@@ -23,7 +23,7 @@ const createFilmDetailsTemplate = (data) =>  {
     <input class="visually-hidden" name="selected-emoji" type="text" id="selected-emoji" value="${emoji}">
   `;
 
-  const getTemplateComments = (commentsFilms) => {
+  const getTemplateComments = (commentsFilms, deleting) => {
     const getCommentFilmElement = (commentData) => {
       const {author, comment, date, emotion, id} = commentData;
       const commentDate = getFormatData(date, 'DD/MM/YYYY hh:mm');
@@ -36,7 +36,7 @@ const createFilmDetailsTemplate = (data) =>  {
           <p class="film-details__comment-info">
             <span class="film-details__comment-author">${author}</span>
             <span class="film-details__comment-day">${commentDate}</span>
-            <button class="film-details__comment-delete" data-comment-id=${id}>Delete</button>
+            <button class="film-details__comment-delete" data-comment-id=${id}>${deleting ? 'deleting...' : 'delete'}</button>
           </p>
         </div>
       </li>`;
@@ -120,16 +120,16 @@ const createFilmDetailsTemplate = (data) =>  {
           <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${data.comments.length}</span></h3>
 
           <ul class="film-details__comments-list">
-          ${isComments ? getTemplateComments(comments) : ''}
+          ${isComments ? getTemplateComments(comments, isDeleting) : ''}
           </ul>
 
           <div class="film-details__new-comment">
-            <div class="film-details__add-emoji-label">
+            <div class="film-details__add-emoji-label" ${isDisabled ? 'disabled' : ''}>
             ${isEmoji ? showEmoji(emojiName) : ''}
             </div>
 
             <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${isDisabled ? 'disabled' : ''}></textarea>
             </label>
 
             <div class="film-details__emoji-list">
@@ -232,7 +232,7 @@ export default class FilmDetails extends SmartView {
     this._callback.watchlistClick();
     this.updateData({
       watchlist: !this._data.watchlist,
-    }, true);
+    });
   }
 
   _alreadyWatchedClickHandler(evt) {
@@ -240,7 +240,7 @@ export default class FilmDetails extends SmartView {
     this._callback.alreadyWatchedClick();
     this.updateData({
       alreadyWatched: !this._data.alreadyWatched,
-    }, true);
+    });
   }
 
   _favoriteClickHandler(evt) {
@@ -248,7 +248,7 @@ export default class FilmDetails extends SmartView {
     this._callback.favoriteClick();
     this.updateData({
       favorite: !this._data.favorite,
-    }, true);
+    });
   }
 
   _keyDownCtrlEnterHandler(evt) {
@@ -311,6 +311,8 @@ export default class FilmDetails extends SmartView {
         isComments: false,
         isEmoji: false,
         emojiName: null,
+        isDisabled: false,
+        isDeleting: false,
       },
     );
   }
@@ -333,6 +335,8 @@ export default class FilmDetails extends SmartView {
     delete data.isEmoji;
     delete data.emojiName;
     delete data.isComments;
+    delete data.isDisabled;
+    delete data.isDeleting;
 
     return data;
   }
