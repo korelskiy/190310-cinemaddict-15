@@ -29,7 +29,7 @@ render(siteHeaderElement, new UserProfileView(), RenderPosition.BEFOREEND);
 
 const movieListPresenter = new MovieListPresenter(filmsModel, filterModel, commentsModel, api);
 const filterPresenter = new FilterPresenter(siteMainElement, filterModel, filmsModel);
-
+movieListPresenter.init();
 
 let statisticsComponent = null;
 const handleSiteMenuClick = (menuItem) => {
@@ -53,9 +53,8 @@ const handleSiteMenuClick = (menuItem) => {
 api.getFilms()
   .then((films) => {
     filterPresenter.init();
-    filmsModel.setFilms(UpdateType.INIT, films);
     filterPresenter.setMenuTypeChangeHandler(handleSiteMenuClick);
-
+    filmsModel.setFilms(UpdateType.INIT, films);
     render(siteFooterStatisticsElement, new StatisticsFooterView(films.length), RenderPosition.BEFOREEND);
   })
   .catch(() => {

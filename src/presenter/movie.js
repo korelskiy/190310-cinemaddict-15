@@ -4,21 +4,15 @@ import {render, RenderPosition, remove, replace} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 import {FilterType} from '../const';
 
-
-/////////////////////////////////////////////////////////////////
-
-// Временно подключил nanoid, generateDate и const для генерации недостоющих данных;
-import {generateDate} from '../utils/film.js';
-import {nanoid} from 'nanoid';
-
-const MIN_DAY_GAP_COMMENT = 0;
-const MAX_DAY_GAP_COMMENT = 180;
-
-//////////////////////////////////////////////////////////////////
-
 const Mode = {
   DEFAULT: 'DEFAULT',
   DETAILS: 'DETAILS',
+};
+
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
 };
 
 const SELECTOR_POPUP = 'section.film-details';
@@ -55,6 +49,7 @@ export default class Film {
 
     this._filmCardComponent = new FilmCardView(this._film);
     this._filmDetailsComponent = new FilmDetailsView(this._film);
+    this._getApiComments();
     this._filmCardComponent.setWatchlistClickHandler(this._handleWatchlistClick);
     this._filmCardComponent.setAlreadyWatchedHandler(this._handleAlreadyWatchedClick);
     this._filmCardComponent.setFavoriteClickHandler(this._handleFavoriteClick);
@@ -100,9 +95,40 @@ export default class Film {
     }
   }
 
+  setViewState(state) {
+    if (this._mode === Mode.DEFAULT) {
+      return;
+    }
+
+    const resetFormState = () => {
+      this._filmDetailsComponent.updateData({
+        isDisabled: false,
+        isDeleting: false,
+      });
+    };
+
+    switch (state) {
+      case State.SAVING:
+        this._filmDetailsComponent.updateData({
+          isDisabled: true,
+        });
+        break;
+      case State.DELETING:
+        this._filmDetailsComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+      case State.ABORTING:
+        this._filmCardComponent.shake(resetFormState);
+        this._filmDetailsComponent.shake(resetFormState);
+        break;
+    }
+  }
+
   _getApiComments() {
     this._api.getComments(this._film.id)
-      .then((comment) => this._commentsModel.comments = comment)
+      .then((comment) => this._filmsModel.comments = comment)
       .then((comment) => this._filmDetailsComponent.setComments(comment));
   }
 
@@ -133,28 +159,26 @@ export default class Film {
     }
   }
 
-  _handleDeleteComment(id) {
-    const commentDel = this._film.comments.find((comment) => comment.id === id);
+  _handleDeleteComment(commentId) {
     this._changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
-      {...this._film, comments: commentDel},
+      commentId,
+      this._film,
     );
   }
 
   _handleAddComment(value, emotion) {
-    const newComment = {
-      id: nanoid(),
-      autor: 'Korelskiy Anton',
-      comment: value,
-      date: generateDate(MIN_DAY_GAP_COMMENT, MAX_DAY_GAP_COMMENT, 'day'),
-      emotion: `./images/emoji/${emotion}.png`,
-    };
+    const comment = value.trim();
+    if (!comment || !emotion) {
+      return;
+    }
 
     this._changeData(
       UserAction.ADD_COMMENT,
       UpdateType.PATCH,
-      {...this._film, comments: newComment},
+      {comment, emotion},
+      this._film,
     );
   }
 
