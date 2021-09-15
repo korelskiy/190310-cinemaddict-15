@@ -1,6 +1,6 @@
 import he from 'he';
 import SmartView from './smart.js';
-import {timeConvert, getFormatData} from '../utils/film.js';
+import {timeConvert, getFormatData, getFormatDataComments} from '../utils/film.js';
 
 
 const createFilmDetailsTemplate = (data) =>  {
@@ -26,7 +26,7 @@ const createFilmDetailsTemplate = (data) =>  {
   const getTemplateComments = (commentsFilms, deleting) => {
     const getCommentFilmElement = (commentData) => {
       const {author, comment, date, emotion, id} = commentData;
-      const commentDate = getFormatData(date, 'DD/MM/YYYY hh:mm');
+      const commentDate = getFormatDataComments(date);
       return `<li class="film-details__comment" data-comment-id=${id}>
         <span class="film-details__comment-emoji">
           <img src="./images/emoji/${emotion}.png" width="55" height="55" alt="emoji-smile">
@@ -43,7 +43,6 @@ const createFilmDetailsTemplate = (data) =>  {
     };
     return commentsFilms.map(getCommentFilmElement).join('');
   };
-
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
