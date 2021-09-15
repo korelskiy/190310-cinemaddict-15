@@ -3,6 +3,8 @@ import FilmDetailsView from '../view/film-details.js';
 import {render, RenderPosition, remove, replace} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 import {FilterType} from '../const';
+import {isOnline} from '../utils/common.js';
+import {toast} from '../utils/toast.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -148,6 +150,9 @@ export default class Film {
     document.addEventListener('keydown', this._escKeyDownHandler);
     body.classList.add(CLASS_HIDE_SCROLL);
     render(body, this._filmDetailsComponent, RenderPosition.BEFOREEND);
+    if (!isOnline()) {
+      toast('You can\'t get comments offline');
+    }
     this._filmDetailsComponent.reset(this._film);
     this._changeMode();
     this._mode = Mode.DETAILS;
@@ -160,6 +165,10 @@ export default class Film {
   }
 
   _handleDeleteComment(commentId) {
+    if (!isOnline()) {
+      toast('You can\'t delete comments offline');
+      return;
+    }
     this._changeData(
       UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
@@ -169,6 +178,10 @@ export default class Film {
   }
 
   _handleAddComment(value, emotion) {
+    if (!isOnline()) {
+      toast('You can\'t add comments offline');
+      return;
+    }
     const comment = value.trim();
     if (!comment || !emotion) {
       return;

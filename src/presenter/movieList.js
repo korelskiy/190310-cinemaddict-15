@@ -270,18 +270,22 @@ export default class Movie {
   }
 
   _renderFilmsPanel() {
+
     if (this._isLoading) {
       this._renderLoading();
       return;
     }
     const films = this._getFilms();
     const filmsCount = films.length;
+
+    this._renderSort();
+
     if (filmsCount === 0) {
       this._renderNoFilm();
       return;
     }
 
-    this._renderSort();
+
     render(siteMainElement, this._filmsComponent, RenderPosition.BEFOREEND);
     render(this._filmsComponent, this._filmsListComponent, RenderPosition.BEFOREEND);
     render(this._filmsListComponent, this._filmsListContainerComponent, RenderPosition.BEFOREEND);
