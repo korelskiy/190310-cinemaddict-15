@@ -1,4 +1,4 @@
-import FilmCardView from '../view/film-card.js';
+import FilmCardView from '../view/filmcard.js';
 import FilmDetailsView from '../view/film-details.js';
 import {render, RenderPosition, remove, replace} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
@@ -77,10 +77,10 @@ export default class Film {
     }
 
     if (this._mode === Mode.DETAILS) {
+      const scrollTop = prevfilmDetailsComponent.getElement().scrollTop;
       replace(this._filmCardComponent, prevfilmCardComponent);
-      replace(this._filmDetailsComponent, prevfilmDetailsComponent);
+      replace(this._filmDetailsComponent, prevfilmDetailsComponent, scrollTop);
     }
-
 
     remove(prevfilmCardComponent);
     remove(prevfilmDetailsComponent);
