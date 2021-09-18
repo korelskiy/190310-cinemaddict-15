@@ -1,6 +1,6 @@
 import UserProfileView from './view/user-profile.js';
 import StatisticsView from './view/statistics.js';
-import StatisticsFooterView from './view/site-footer-statistics.js';
+import StatisticsFooterView from './view/statistics-footer.js';
 import {render, RenderPosition} from './utils/render.js';
 import MovieListPresenter from './presenter/movieList.js';
 

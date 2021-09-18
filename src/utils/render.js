@@ -24,9 +24,11 @@ export const render = (container, child, place) => {
   }
 };
 
-export const replace = (newChild, oldChild) => {
+export const replace = (newChild, oldChild, scrollTop) => {
+
   if (oldChild instanceof Abstract) {
     oldChild = oldChild.getElement();
+
   }
 
   if (newChild instanceof Abstract) {
@@ -38,8 +40,9 @@ export const replace = (newChild, oldChild) => {
   if (parent === null || oldChild === null || newChild === null) {
     throw new Error('Can\'t replace unexisting elements');
   }
-
   parent.replaceChild(newChild, oldChild);
+
+  newChild.scrollTop = scrollTop;
 };
 
 
