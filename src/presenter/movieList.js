@@ -216,15 +216,6 @@ export default class Movie {
     render(this._filmsListComponent, this._loadMoreButtonComponent, RenderPosition.BEFOREEND);
   }
 
-  _clearFilmList() {
-    this._filmPresenter.forEach((presenter) => presenter.destroy());
-    this._filmTopPresenter.forEach((presenter) => presenter.destroy());
-    this._filmCommentedPresenter.forEach((presenter) => presenter.destroy());
-    this._filmPresenter.clear();
-    this._renderedFilmsCount = FILMS_COUNT_PER_STEP;
-    remove(this._loadMoreButtonComponent);
-  }
-
   _renderFilmTop() {
     render(this._filmsComponent, this._filmsTopComponent, RenderPosition.BEFOREEND);
     render(this._filmsTopComponent, this._filmsContainerTopComponent, RenderPosition.BEFOREEND);
